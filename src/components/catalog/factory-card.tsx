@@ -26,7 +26,7 @@ export function FactoryCard({
 
   return (
     <div
-      className={`relative rounded-card border border-ink bg-warm-parchment transition-transform hover:-translate-y-1 ${
+      className={`relative rounded-card border border-ink bg-warm-parchment transition-transform duration-200 hover:-translate-y-1 ${
         featured ? "p-6" : "p-4"
       }`}
     >

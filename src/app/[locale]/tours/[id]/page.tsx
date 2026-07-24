@@ -240,7 +240,7 @@ export default async function TourPage({
                   <Link
                     key={company.factory.id}
                     href={company.href}
-                    className="rounded-card border border-ink bg-warm-parchment p-4 transition-transform hover:-translate-y-1"
+                    className="rounded-card border border-ink bg-warm-parchment p-4 transition-transform duration-200 hover:-translate-y-1"
                   >
                     {card}
                   </Link>

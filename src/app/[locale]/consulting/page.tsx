@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/motion/reveal";
 import { pageAlternates } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -39,7 +40,7 @@ export default async function ConsultingPage({ params }: { params: Promise<{ loc
 
       {/* 2. Карточки услуг — только при наличии данных */}
       {services.length > 0 && (
-        <div className="mt-12 grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
+        <Reveal cascade className="mt-12 grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
           {services.map((service) => {
             const hasPage = Boolean(service.fullDescription_ru);
             const inner = (
@@ -66,7 +67,7 @@ export default async function ConsultingPage({ params }: { params: Promise<{ loc
               <Link
                 key={service.id}
                 href={`/consulting/${service.id}`}
-                className="rounded-card border border-ink bg-warm-parchment p-6 transition-transform hover:-translate-y-1"
+                className="rounded-card border border-ink bg-warm-parchment p-6 transition-transform duration-200 hover:-translate-y-1"
               >
                 {inner}
               </Link>
@@ -76,7 +77,7 @@ export default async function ConsultingPage({ params }: { params: Promise<{ loc
               </div>
             );
           })}
-        </div>
+        </Reveal>
       )}
 
       {/* 3. Для кого — из данных услуг */}

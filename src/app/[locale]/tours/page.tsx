@@ -49,7 +49,7 @@ export default async function ToursHubPage({ params }: { params: Promise<{ local
             <Link
               key={tour.id}
               href={`/tours/${tour.id}`}
-              className="rounded-card border border-ink bg-warm-parchment p-6 transition-transform hover:-translate-y-1 tablet:p-8"
+              className="rounded-card border border-ink bg-warm-parchment p-6 transition-transform duration-200 hover:-translate-y-1 tablet:p-8"
             >
               <h2 className="text-heading">{isEn ? tour.title_en : tour.title_ru}</h2>
               <p className="mt-2 max-w-2xl text-body text-stone">{isEn ? tour.summary_en : tour.summary_ru}</p>

@@ -58,6 +58,9 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
+        <noscript>
+          <style>{`.reveal,.reveal-cascade>*{opacity:1 !important;animation:none !important}`}</style>
+        </noscript>
         <NextIntlClientProvider messages={messages}>
           <Header
             categories={categories}

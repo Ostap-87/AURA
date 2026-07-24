@@ -136,3 +136,35 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Появление секций и каскад карточек (design/tokens.md, «Анимации»).
+   Анимация вместо transition, чтобы не конфликтовать с ховером карточек;
+   скрытие действует только при включённой анимации у пользователя. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .reveal,
+  .reveal-cascade > * {
+    opacity: 0;
+  }
+
+  .reveal.is-revealed {
+    opacity: 1;
+    animation: reveal-in 400ms ease-out backwards;
+  }
+
+  .reveal-cascade.is-revealed > * {
+    opacity: 1;
+    animation: reveal-in 400ms ease-out backwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+}

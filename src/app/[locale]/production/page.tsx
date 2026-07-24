@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/motion/reveal";
 import { pageAlternates } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -47,12 +48,12 @@ export default async function ProductionHubPage({
           <p className="mt-2 text-body text-stone">{tCatalog("hubEmptyText")}</p>
         </div>
       ) : (
-        <div className="mt-12 grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
+        <Reveal cascade className="mt-12 grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
           {categoriesWithCounts.map(({ category, factoryCount }) => (
             <Link
               key={category.id}
               href={`/production/equipment/${category.id}`}
-              className="rounded-card border border-ink bg-warm-parchment p-6 transition-transform hover:-translate-y-1"
+              className="rounded-card border border-ink bg-warm-parchment p-6 transition-transform duration-200 hover:-translate-y-1"
             >
               <h2 className="text-heading-sm">
                 {locale === "en" ? category.name_en : category.name_ru}
@@ -65,7 +66,7 @@ export default async function ProductionHubPage({
               </p>
             </Link>
           ))}
-        </div>
+        </Reveal>
       )}
     </section>
   );

@@ -18,7 +18,7 @@ export function Tiles({
           key={tile.id}
           type="button"
           onClick={() => onSelect(tile.id)}
-          className="flex min-h-24 flex-col items-center justify-center gap-3 rounded-card border border-ink bg-warm-parchment p-6 text-center transition-transform hover:-translate-y-1"
+          className="flex min-h-24 flex-col items-center justify-center gap-3 rounded-card border border-ink bg-warm-parchment p-6 text-center transition-transform duration-200 hover:-translate-y-1"
         >
           {withIcons && <IndustryIcon id={tile.id} className="h-8 w-8" />}
           <span className="text-body font-medium">{tile.label}</span>
