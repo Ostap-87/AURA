@@ -2,9 +2,11 @@ import { getTranslations } from "next-intl/server";
 import { MediaGallery } from "@/components/media/media-gallery";
 import { MediaSlot } from "@/components/media/media-slot";
 import { LeadForm } from "@/components/forms/lead-form";
+import { Link } from "@/i18n/navigation";
 import { parseModels } from "@/lib/catalog";
 import { formatPriceRange } from "@/lib/format";
 import { industryTagLabel } from "@/lib/industry-tags";
+import { getActiveTourBadge, tourBadgeText } from "@/lib/tours";
 import type { Category, Factory } from "@/lib/schemas";
 
 export async function FactoryDetail({
@@ -21,9 +23,21 @@ export async function FactoryDetail({
   const models = parseModels(factory.models);
   const description = locale === "en" && factory.description_en ? factory.description_en : factory.description_ru;
 
+  // Плашка «Этот завод в программе тура [даты]» — связка каталога и тура (5.3)
+  const tourBadge = await getActiveTourBadge();
+  const inTour = tourBadge && tourBadge.companyIds.has(factory.id);
+
   return (
     <div className="flex flex-col gap-8">
       <div>
+        {inTour && (
+          <Link
+            href={`/tours/${tourBadge.tour.id}`}
+            className="mb-3 inline-block rounded-chip bg-accent px-4 py-1.5 text-body-sm font-medium text-ink"
+          >
+            {tourBadgeText(tourBadge.tour, locale)}
+          </Link>
+        )}
         <h2 className="text-heading-lg">{factory.name}</h2>
         {factory.nameZh && <p className="mt-1 text-body text-stone">{factory.nameZh}</p>}
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-body-sm text-stone">

@@ -13,6 +13,7 @@ import {
 } from "@/lib/catalog";
 import { formatPriceRange } from "@/lib/format";
 import { industryTagLabelMap } from "@/lib/industry-tags";
+import { getActiveTourBadge, tourBadgeText } from "@/lib/tours";
 import { CatalogFilters } from "@/components/catalog/filters";
 import { CompareProvider } from "@/components/catalog/compare-context";
 import { FactoryCard } from "@/components/catalog/factory-card";
@@ -56,6 +57,11 @@ export default async function CategoryPage({
 
   const allFactories = await getFactoriesForCategory(category.id);
   const metrics = computeCategoryMetrics(category, allFactories);
+  const activeTour = await getActiveTourBadge();
+  const badgeFor = (factoryId: string) =>
+    activeTour && activeTour.companyIds.has(factoryId)
+      ? tourBadgeText(activeTour.tour, locale)
+      : undefined;
 
   const industries = query.industry?.split(",").filter(Boolean) ?? [];
   const leadTimes = query.leadtime?.split(",").filter(Boolean) ?? [];
@@ -127,7 +133,7 @@ export default async function CategoryPage({
                     <h2 className="mb-4 text-heading-sm">{t("featuredTitle")}</h2>
                     <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2">
                       {featured.map((factory) => (
-                        <FactoryCard key={factory.id} factory={factory} categoryId={category.id} featured />
+                        <FactoryCard key={factory.id} factory={factory} categoryId={category.id} featured tourBadge={badgeFor(factory.id)} />
                       ))}
                     </div>
                   </div>
@@ -137,7 +143,7 @@ export default async function CategoryPage({
                     {featured.length > 0 && <h2 className="mb-4 text-heading-sm">{t("allFactoriesTitle")}</h2>}
                     <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
                       {compact.map((factory) => (
-                        <FactoryCard key={factory.id} factory={factory} categoryId={category.id} />
+                        <FactoryCard key={factory.id} factory={factory} categoryId={category.id} tourBadge={badgeFor(factory.id)} />
                       ))}
                     </div>
                   </div>

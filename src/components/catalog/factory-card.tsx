@@ -11,10 +11,13 @@ export function FactoryCard({
   factory,
   categoryId,
   featured = false,
+  tourBadge,
 }: {
   factory: Factory;
   categoryId: string;
   featured?: boolean;
+  /** Текст плашки «Этот завод в программе тура …», если завод в активной поездке (5.3). */
+  tourBadge?: string;
 }) {
   const t = useTranslations("catalog");
   const { selected, toggle, isFull } = useCompare();
@@ -50,6 +53,11 @@ export function FactoryCard({
             emptyBehavior="hidden"
             className="mb-4"
           />
+        )}
+        {tourBadge && (
+          <p className="mb-2 inline-block rounded-chip bg-accent px-3 py-1 text-caption font-medium text-ink">
+            {tourBadge}
+          </p>
         )}
         <h3 className={featured ? "text-heading-sm pr-10" : "text-body font-medium pr-10"}>
           {factory.name}
