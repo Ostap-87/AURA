@@ -71,7 +71,7 @@ export function Header({
       href: "/production",
       categories: categories
         .filter((c) => c.segment === "production")
-        .map((c) => ({ id: c.id, label: nameByLocale(c), href: `/production/${c.id}` })),
+        .map((c) => ({ id: c.id, label: nameByLocale(c), href: `/production/equipment/${c.id}` })),
     },
     { key: "tours", href: "/tours", categories: [] },
   ];
