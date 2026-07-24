@@ -137,6 +137,100 @@ body {
   }
 }
 
+/* Пустой медиа-слот как технический чертёж: сетка, перекрестие, подпись.
+   Пустота выглядит как замысел, а не как дыра (этап «оживления»). */
+.media-slot-empty {
+  position: relative;
+  background-color: var(--color-warm-parchment);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-fog) 45%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-fog) 45%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.media-slot-empty::before,
+.media-slot-empty::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background-color: var(--color-ash);
+  transform: translate(-50%, -50%);
+}
+.media-slot-empty::before {
+  width: 22px;
+  height: 1px;
+}
+.media-slot-empty::after {
+  width: 1px;
+  height: 22px;
+}
+
+/* Бегущая строка: заводы и города из данных. Пауза при наведении;
+   при prefers-reduced-motion глобальное правило останавливает анимацию. */
+.ticker {
+  overflow: hidden;
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes ticker-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .ticker-track {
+    animation: ticker-scroll var(--ticker-duration, 60s) linear infinite;
+  }
+  .ticker:hover .ticker-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Жёлтый маркер в хиро: единственный акцентный элемент первого экрана.
+   Без анимации у пользователя с reduced motion маркер просто закрашен. */
+.hero-mark {
+  color: inherit;
+  background-color: transparent;
+  background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  background-repeat: no-repeat;
+  background-size: 100% 72%;
+  background-position: 0 62%;
+  padding: 0 0.12em;
+  margin: 0 -0.12em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mark-sweep {
+    to {
+      background-size: 100% 72%;
+    }
+  }
+  .hero-mark {
+    background-size: 0% 72%;
+    animation: mark-sweep 500ms ease-out 400ms forwards;
+  }
+}
+
+/* Маршрут на карте Китая: линия прорисовывается при появлении секции. */
+.map-route {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes map-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .reveal.is-revealed .map-route {
+    animation: map-draw 1400ms ease-out 200ms backwards;
+  }
+}
+
 /* Появление секций и каскад карточек (design/tokens.md, «Анимации»).
    Анимация вместо transition, чтобы не конфликтовать с ховером карточек;
    скрытие действует только при включённой анимации у пользователя. */

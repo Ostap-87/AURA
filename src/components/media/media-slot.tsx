@@ -12,6 +12,8 @@ export type MediaSlotProps = {
   alt?: string;
   sizes?: string;
   className?: string;
+  /** Моноширинная подпись в пустом слоте («съёмка в подготовке» и т.п.). */
+  placeholderLabel?: string;
 };
 
 const VIDEO_FILE_PATTERN = /\.(mp4|webm|mov)(\?.*)?$/i;
@@ -39,6 +41,7 @@ export function MediaSlot({
   alt = "",
   sizes = "(min-width: 1024px) 33vw, 100vw",
   className,
+  placeholderLabel,
 }: MediaSlotProps) {
   // Слот без подписи считается незаполненным независимо от наличия медиа.
   const isFilled = Boolean(src && caption);
@@ -48,10 +51,16 @@ export function MediaSlot({
     if (emptyBehavior !== "placeholder") return null;
     return (
       <div
-        className={className}
-        style={{ aspectRatio: aspect.replace("/", " / "), backgroundColor: "var(--color-warm-parchment)" }}
+        className={`media-slot-empty ${className ?? ""}`.trim()}
+        style={{ aspectRatio: aspect.replace("/", " / ") }}
         aria-hidden
-      />
+      >
+        {placeholderLabel && (
+          <span className="absolute bottom-3 left-3 font-mono text-caption uppercase text-ash">
+            {placeholderLabel}
+          </span>
+        )}
+      </div>
     );
   }
 

@@ -3,6 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { MediaSlot } from "@/components/media/media-slot";
 import { Reveal } from "@/components/motion/reveal";
+import { Ticker } from "@/components/motion/ticker";
 import { SupplierCard } from "@/components/shared/supplier-card";
 import { CountUp } from "@/components/quiz/count-up";
 import { LeadForm } from "@/components/forms/lead-form";
@@ -108,9 +109,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {isEn ? "Robotics direct from Chinese factories" : "Робототехника напрямую с китайских заводов"}
           </h1>
           <p className="text-subheading text-stone">
-            {isEn
-              ? "Robots, production equipment and sourcing trips. 15–30% below suppliers with a Russian importer's markup — because there is no importer."
-              : "Роботы, оборудование для производств и закупочные поездки. На 15–30% дешевле поставщиков с наценкой российского импортёра — потому что импортёра в цепочке нет."}
+            {isEn ? (
+              <>
+                Robots, production equipment and sourcing trips.{" "}
+                <mark className="hero-mark">15–30% below</mark> suppliers with a Russian
+                importer&apos;s markup — because there is no importer.
+              </>
+            ) : (
+              <>
+                Роботы, оборудование для производств и закупочные поездки.{" "}
+                <mark className="hero-mark">На 15–30% дешевле</mark> поставщиков с наценкой
+                российского импортёра — потому что импортёра в цепочке нет.
+              </>
+            )}
           </p>
           <div className="flex flex-wrap gap-3">
             <LinkButton href="/quiz">{isEn ? "Match a solution" : "Подобрать решение"}</LinkButton>
@@ -120,7 +131,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
         <div className="lg:w-1/2">
-          <MediaSlot aspect="4/3" emptyBehavior="placeholder" />
+          <MediaSlot
+            aspect="4/3"
+            emptyBehavior="placeholder"
+            placeholderLabel={isEn ? "Factory footage — in production" : "Съёмка с производств — в подготовке"}
+          />
         </div>
       </section>
 
@@ -133,10 +148,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <Link
                 key={direction.href}
                 href={direction.href}
-                className="rounded-card border border-ink bg-canvas p-6 transition-transform duration-200 hover:-translate-y-1"
+                className="group rounded-card border border-ink bg-canvas p-6 transition-transform duration-200 hover:-translate-y-1"
               >
                 <h3 className="text-heading-sm">{direction.title}</h3>
                 <p className="mt-2 text-body-sm text-stone">{direction.text}</p>
+                <span
+                  aria-hidden
+                  className="mt-4 inline-block font-mono text-body transition-transform duration-200 group-hover:translate-x-1"
+                >
+                  →
+                </span>
               </Link>
             ))}
           </Reveal>
@@ -177,6 +198,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           )}
         </div>
       </section>
+
+      {/* Бегущая строка: заводы и города из базы — живая, но документальная */}
+      {published.length > 0 && (
+        <div className="border-b border-fog py-3 font-mono text-caption uppercase text-stone">
+          <Ticker
+            items={published.map((f) => {
+              const city = f.city.split(",")[0]?.trim();
+              return city ? `${f.name} — ${city}` : f.name;
+            })}
+          />
+        </div>
+      )}
 
       {/* Почему с нами дешевле — белая секция */}
       <section className="mx-auto max-w-(--container-page) px-5 py-16 lg:px-10">

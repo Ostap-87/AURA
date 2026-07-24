@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/motion/reveal";
 import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { MediaSlot } from "@/components/media/media-slot";
@@ -52,7 +53,7 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
       </p>
 
       {factories.length > 0 && (
-        <div className="mt-12 grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
+        <Reveal cascade className="mt-12 grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
           {factories.map((factory) => {
             const description =
               isEn && factory.description_en ? factory.description_en : factory.description_ru;
@@ -82,7 +83,7 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
               </article>
             );
           })}
-        </div>
+        </Reveal>
       )}
     </section>
   );

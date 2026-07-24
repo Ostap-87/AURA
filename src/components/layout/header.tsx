@@ -29,11 +29,20 @@ export function Header({
   const pathname = usePathname();
   const [openKey, setOpenKey] = useState<NavKey | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     setOpenKey(null);
     setMobileOpen(false);
   }, [pathname]);
+
+  // Тень у прилипшей шапки появляется после начала прокрутки (десктоп)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -81,7 +90,11 @@ export function Header({
   }
 
   return (
-    <header className="relative border-b border-fog bg-canvas">
+    <header
+      className={`relative border-b border-fog bg-canvas transition-shadow duration-200 tablet-lg:sticky tablet-lg:top-0 tablet-lg:z-40 ${
+        scrolled ? "tablet-lg:shadow-[0_10px_24px_-20px_rgb(0_0_0/0.35)]" : ""
+      }`}
+    >
       <div className="mx-auto flex max-w-(--container-page) items-center justify-between px-5 py-4 lg:px-10">
         <Link href="/" className="shrink-0 text-heading-sm">
           {logo}

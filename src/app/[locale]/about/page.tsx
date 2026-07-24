@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/motion/reveal";
 import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { MediaSlot } from "@/components/media/media-slot";
@@ -63,10 +64,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         ))}
       </div>
 
-      <div className="mt-12 grid grid-cols-1 gap-4 tablet:grid-cols-2">
+      <Reveal cascade className="mt-12 grid grid-cols-1 gap-4 tablet:grid-cols-2">
         <MediaSlot aspect="4/3" emptyBehavior="placeholder" />
         <MediaSlot aspect="4/3" emptyBehavior="placeholder" />
-      </div>
+      </Reveal>
 
       <div className="mt-12 rounded-card bg-ink p-8 text-canvas">
         <p className="font-mono text-body-sm">上海拼那克了科技有限责任公司</p>
