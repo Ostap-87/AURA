@@ -29,7 +29,8 @@
   },
   "breadcrumbs": {
     "home": "Home",
-    "catalog": "Robots"
+    "catalog": "Robots",
+    "production": "Production equipment"
   },
   "catalog": {
     "hubTitle": "Robot catalog",
@@ -67,14 +68,29 @@
     "noResultsReset": "Reset filters",
     "noResultsLead": "Leave a request"
   },
+  "production": {
+    "hubTitle": "Production equipment",
+    "hubDescription": "Equipment for food and related production, direct from Chinese factories.",
+    "subIndustryEmptyTitle": "No factories for this industry yet",
+    "subIndustryEmptyText": "We're expanding the supplier base — leave a request and we'll find one manually for your task.",
+    "equipmentEmptyTitle": "This category isn't set up yet",
+    "equipmentEmptyText": "Prices and factories for this equipment type are being added to the sheet.",
+    "relatedEquipmentTitle": "Available equipment",
+    "relatedIndustriesTitle": "Used in",
+    "suppliersTitle": "Suppliers",
+    "hygieneNote": "Food production equipment is chosen with hygiene requirements in mind: materials in contact with the product, storage and processing temperature, sanitation routine (washing, disinfection), and HACCP compliance. Confirm these with the supplier before ordering."
+  },
   "form": {
     "nameLabel": "What should we call you?",
     "phoneLabel": "Enter your number so we can call back",
     "taskLabel": "Task",
     "taskPlaceholder": "What needs automating or sourcing",
+    "automateLabel": "What needs automating",
     "modelLabel": "Model",
     "modelUnknown": "Not sure — match it to my task",
     "submitGetQuote": "Get a quote",
+    "submitRequestQuote": "Request a quote",
+    "successBackProduction": "Back to equipment",
     "consentText": "By clicking the button, I agree to the",
     "consentLink": "personal data processing policy",
     "submitting": "Sending",
