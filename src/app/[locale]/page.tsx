@@ -9,6 +9,8 @@ import { CountUp } from "@/components/quiz/count-up";
 import { LeadForm } from "@/components/forms/lead-form";
 import { LinkButton } from "@/components/ui/button";
 import { getConsulting, getFactories, getTours } from "@/lib/data";
+import { getHeroMedia } from "@/lib/hero-media";
+import { HeroBackground } from "@/components/home/hero-background";
 import { deliverySteps } from "@/lib/content/delivery";
 import { getTranslations } from "next-intl/server";
 
@@ -35,6 +37,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getTours(),
     getConsulting(),
   ]);
+
+  const hero = getHeroMedia();
+  // Тёмный вариант хиро включается появлением видео или постера в public/media
+  const heroDark = Boolean(hero.video || hero.poster);
 
   const published = factories.filter((f) => f.published);
   const featured = published.filter((f) => f.featured).slice(0, 3);
@@ -102,13 +108,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
-      {/* Хиро — белая секция */}
-      <section className="mx-auto flex max-w-(--container-page) flex-col gap-10 px-5 py-16 lg:flex-row lg:items-center lg:gap-16 lg:px-10 lg:py-24">
-        <div className="flex flex-col gap-6 lg:w-1/2">
+      {/* Хиро: светлая секция со слотом-чертежом; при наличии видео/постера
+          в public/media — тёмная, с фоновым видео и белым текстом */}
+      <section className={heroDark ? "relative bg-ink text-canvas" : undefined}>
+        {heroDark && (
+          <HeroBackground webm={hero.video?.webm} mp4={hero.video?.mp4} poster={hero.poster} />
+        )}
+        <div
+          className={`relative mx-auto flex max-w-(--container-page) flex-col gap-10 px-5 py-16 lg:flex-row lg:items-center lg:gap-16 lg:px-10 ${
+            heroDark ? "lg:min-h-[72vh] lg:py-28" : "lg:py-24"
+          }`}
+        >
+        <div className={`flex flex-col gap-6 ${heroDark ? "max-w-2xl" : "lg:w-1/2"}`}>
           <h1 className="text-display-xl">
             {isEn ? "Robotics direct from Chinese factories" : "Робототехника напрямую с китайских заводов"}
           </h1>
-          <p className="text-subheading text-stone">
+          <p className={`text-subheading ${heroDark ? "text-fog" : "text-stone"}`}>
             {isEn ? (
               <>
                 Robots, production equipment and sourcing trips.{" "}
@@ -124,18 +139,40 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             )}
           </p>
           <div className="flex flex-wrap gap-3">
-            <LinkButton href="/quiz">{isEn ? "Match a solution" : "Подобрать решение"}</LinkButton>
-            <LinkButton href="/catalog" variant="secondary">
-              {isEn ? "Browse the catalog" : "Смотреть каталог"}
-            </LinkButton>
+            {heroDark ? (
+              <>
+                <Link
+                  href="/quiz"
+                  className="inline-block rounded-button bg-canvas px-6 py-3 text-center text-body font-medium text-ink"
+                >
+                  {isEn ? "Match a solution" : "Подобрать решение"}
+                </Link>
+                <Link
+                  href="/catalog"
+                  className="inline-block rounded-button border border-canvas px-6 py-3 text-center text-body font-medium text-canvas"
+                >
+                  {isEn ? "Browse the catalog" : "Смотреть каталог"}
+                </Link>
+              </>
+            ) : (
+              <>
+                <LinkButton href="/quiz">{isEn ? "Match a solution" : "Подобрать решение"}</LinkButton>
+                <LinkButton href="/catalog" variant="secondary">
+                  {isEn ? "Browse the catalog" : "Смотреть каталог"}
+                </LinkButton>
+              </>
+            )}
           </div>
         </div>
-        <div className="lg:w-1/2">
-          <MediaSlot
-            aspect="4/3"
-            emptyBehavior="placeholder"
-            placeholderLabel={isEn ? "Factory footage — in production" : "Съёмка с производств — в подготовке"}
-          />
+        {!heroDark && (
+          <div className="lg:w-1/2">
+            <MediaSlot
+              aspect="4/3"
+              emptyBehavior="placeholder"
+              placeholderLabel={isEn ? "Factory footage — in production" : "Съёмка с производств — в подготовке"}
+            />
+          </div>
+        )}
         </div>
       </section>
 

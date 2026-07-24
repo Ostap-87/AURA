@@ -8,6 +8,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Logo } from "@/components/layout/logo";
 import { Analytics } from "@/components/analytics/analytics";
+import { RobotMascot } from "@/components/mascot/robot-mascot";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getCategories, getConsulting } from "@/lib/data";
 import { organizationJsonLd, siteUrl } from "@/lib/seo";
@@ -70,6 +71,7 @@ export default async function LocaleLayout({
           />
           <main>{children}</main>
           <Footer />
+          <RobotMascot />
         </NextIntlClientProvider>
         <JsonLd data={organizationJsonLd()} />
         <Analytics />
