@@ -1,0 +1,100 @@
+import { getTranslations } from "next-intl/server";
+import { MediaGallery } from "@/components/media/media-gallery";
+import { MediaSlot } from "@/components/media/media-slot";
+import { LeadForm } from "@/components/forms/lead-form";
+import { parseModels } from "@/lib/catalog";
+import { formatPriceRange } from "@/lib/format";
+import { industryTagLabel } from "@/lib/industry-tags";
+import type { Category, Factory } from "@/lib/schemas";
+
+export async function FactoryDetail({
+  factory,
+  category,
+  locale,
+}: {
+  factory: Factory;
+  category: Category;
+  locale: string;
+}) {
+  const t = await getTranslations({ locale, namespace: "catalog" });
+  const tForm = await getTranslations({ locale, namespace: "form" });
+  const models = parseModels(factory.models);
+  const description = locale === "en" && factory.description_en ? factory.description_en : factory.description_ru;
+
+  return (
+    <div className="flex flex-col gap-8">
+      <div>
+        <h2 className="text-heading-lg">{factory.name}</h2>
+        {factory.nameZh && <p className="mt-1 text-body text-stone">{factory.nameZh}</p>}
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-body-sm text-stone">
+          <span>
+            {t("factoryCountry")}: {factory.country}
+          </span>
+          <span>
+            {t("factoryCity")}: {factory.city}
+          </span>
+          {factory.founded && (
+            <span>
+              {t("factoryFounded")}: {factory.founded}
+            </span>
+          )}
+        </div>
+        {factory.industries.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {factory.industries.map((industry) => (
+              <span key={industry} className="rounded-chip border border-fog px-3 py-1 text-body-sm text-stone">
+                {industryTagLabel(industry, locale)}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <p className="text-body text-ink">{description}</p>
+
+      <div className="flex flex-wrap gap-x-8 gap-y-2 rounded-card bg-warm-parchment p-4">
+        <div>
+          <p className="text-caption uppercase text-ash">{t("metricsPrice")}</p>
+          <p className="font-mono text-body">{formatPriceRange(category.priceMin, category.priceMax, locale)}</p>
+        </div>
+        <div>
+          <p className="text-caption uppercase text-ash">{t("metricsLeadTime")}</p>
+          <p className="font-mono text-body">{factory.leadTime}</p>
+        </div>
+      </div>
+
+      {factory.videoUrl && (
+        <MediaSlot
+          src={factory.videoUrl}
+          caption={factory.photoCaptions[0]}
+          aspect="16/9"
+          emptyBehavior="hidden"
+        />
+      )}
+
+      <MediaGallery photos={factory.photos} captions={factory.photoCaptions} aspect="4/3" />
+
+      <LeadForm
+        label="catalog_modal"
+        fields={[
+          {
+            type: "select",
+            name: "model",
+            label: tForm("modelLabel"),
+            options: [
+              { value: "unknown", label: tForm("modelUnknown") },
+              ...models.map((model) => ({ value: model, label: model })),
+            ],
+          },
+          { type: "text", name: "name", label: tForm("nameLabel") },
+          { type: "tel", name: "phone", label: tForm("phoneLabel") },
+          { type: "textarea", name: "task", label: tForm("taskLabel"), placeholder: tForm("taskPlaceholder") },
+        ]}
+        hidden={{ factory: factory.id, category: category.id }}
+        submitLabel={tForm("submitGetQuote")}
+        backHref={`/catalog/${category.id}`}
+        backLabel={tForm("successBackCatalog")}
+      />
+    </div>
+  );
+}
