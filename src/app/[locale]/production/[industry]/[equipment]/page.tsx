@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { LeadForm } from "@/components/forms/lead-form";
-import { SupplierCard } from "@/components/production/supplier-card";
+import { SupplierCard } from "@/components/shared/supplier-card";
 import { getIntersectionFactories, getIntersectionParams } from "@/lib/production";
 import { equipmentTypes, subIndustries } from "@/lib/reference-data";
 

@@ -3,9 +3,10 @@ import { MediaSlot } from "@/components/media/media-slot";
 import type { Factory } from "@/lib/schemas";
 
 /**
- * Карточка поставщика для страниц оборудования/отраслей. В отличие от
- * FactoryCard в каталоге роботов, здесь нет ни модалки, ни сравнения —
- * PROJECT.md 5.2 описывает для этого раздела только карточки с формой.
+ * Карточка поставщика без модалки и сравнения — используется на
+ * страницах оборудования/отраслей (PROJECT.md 5.2) и на экране
+ * результата квиза (5.6). Для каталога роботов есть отдельная
+ * FactoryCard с модалкой и сравнением (5.1).
  */
 export async function SupplierCard({ factory, locale }: { factory: Factory; locale: string }) {
   const t = await getTranslations({ locale, namespace: "catalog" });
