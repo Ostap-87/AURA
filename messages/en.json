@@ -22,7 +22,15 @@
     "officePhoneLabel": "Shanghai office",
     "uscc": "Unified Social Credit Code",
     "uscPending": "to be added",
-    "copyright": "Aura Robotics. Robotics supply from China, made to order."
+    "copyright": "Aura Robotics. Robotics supply from China, made to order.",
+    "navDelivery": "How delivery works",
+    "navPayment": "Delivery and payment",
+    "navQuiz": "Solution finder",
+    "navFaq": "Questions and answers",
+    "navAbout": "About",
+    "navPartners": "Partners and R&D",
+    "navContacts": "Contacts",
+    "navPolicy": "Data processing policy"
   },
   "logo": {
     "alt": "Aura Robotics"
@@ -30,7 +38,14 @@
   "breadcrumbs": {
     "home": "Home",
     "catalog": "Robots",
-    "production": "Production equipment"
+    "production": "Production equipment",
+    "industries": "Industries",
+    "services": "Services"
+  },
+  "faq": {
+    "title": "Questions and answers",
+    "searchPlaceholder": "Search questions",
+    "noResults": "Nothing found — ask your question via the contacts page form."
   },
   "catalog": {
     "hubTitle": "Robot catalog",
