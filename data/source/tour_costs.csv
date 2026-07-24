@@ -1,0 +1,6 @@
+tourId,order,name_ru,name_en,calculation_ru,calculation_en,amount,note,type
+tour-2026-08,1,Организация программы и сопровождение,Program organization and support,"Согласование визитов на 12 производств, сопровождение на всех встречах, услуги переводчика, лекции в рамках посещений, техническая экспертиза наших инженеров, прямые контакты с производителями","Arranging visits to 12 facilities, on-site support, interpreter, lectures, technical expertise, direct manufacturer contacts",310000,,fixed
+tour-2026-08,2,Проживание,Accommodation,"6 суток, отели 5 звёзд, 15 000 ₽ за сутки","6 nights, 5-star hotels",90000,,fixed
+tour-2026-08,3,Питание,Meals,"6 суток, обед и ужин","6 days, lunch and dinner",50000,,fixed
+tour-2026-08,4,Транспорт в Китае,Transport in China,"Автобус по городу, перелёты между городами, такси, встреча и проводы в аэропорту","City bus, domestic flights, taxi, airport transfers",50000,,fixed
+tour-2026-08,5,Перелёт,International flight,"Москва — Пекин, Шэньчжэнь или Гонконг — Москва","Moscow — Beijing, Shenzhen or Hong Kong — Moscow",80000,"Стоимость зависит от дат и наличия мест",estimate

@@ -1,0 +1,6 @@
+tourId,dayNumber,date,city,cityEn,district,companies,timeFrom,timeTo,location,logistics,note
+tour-2026-08,1,,Пекин,Beijing,Haidian,"galbot,robotera",10:00,12:30,PKU Lab,Вылет ~20:00 → Шанхай,
+tour-2026-08,2,,Шанхай,Shanghai,Zhangjiang,"agibot,kepler,droidup",09:30,11:30,Zhangjiang Hi-Tech Park,,Все три компании в кластере Zhangjiang Robot Valley
+tour-2026-08,3,,Шанхай,Shanghai,Pudong,"fourier,seer",10:00,12:00,Pudong,Вылет ~19:30 PVG → Шэньчжэнь,
+tour-2026-08,4,,Шэньчжэнь,Shenzhen,Nanshan,"ubtech,leju,limx",10:00,12:00,"Nanshan Zhiyuan, Xueyuan Ave",,
+tour-2026-08,5,,Шэньчжэнь,Shenzhen,,"engineai,pudu",10:00,12:00,Shenzhen,,Завершение экспедиции
