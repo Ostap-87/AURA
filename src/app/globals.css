@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — Aura Robotics (design/tokens.md).
+ * Значения из шаблона [шаблон] взяты буквально; трекинг и мобильная
+ * колонка типографики — [производное], адаптированы под кириллицу.
+ */
+@theme {
+  /* Цвета */
+  --color-accent: #fff65d;
+  --color-canvas: #ffffff;
+  --color-warm-parchment: #f8f6f3;
+  --color-fog: #d9d7d5;
+  --color-ash: #8f8e8d;
+  --color-stone: #727272;
+  --color-ink: #262626;
+  --color-charcoal: #2d2d2d;
+  --color-pure-black: #000000;
+
+  /* Шрифты */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Радиусы */
+  --radius-button: 30px;
+  --radius-chip: 24px;
+  --radius-card: 10px;
+  --radius-utility: 4px;
+
+  /* Контейнер и отступы секций */
+  --container-page: 1280px;
+  --spacing-section-desktop: 64px;
+  --spacing-section-mobile: 40px;
+  --spacing-card-padding: 24px;
+
+  /* Брейкпоинты (data/tokens.md, [производное]) */
+  --breakpoint-tablet: 768px;
+  --breakpoint-tablet-lg: 1024px;
+  --breakpoint-desktop: 1280px;
+
+  /* Типографическая шкала — мобильные значения по умолчанию (mobile-first) */
+  --text-display-xl: 40px;
+  --text-display-xl--line-height: 0.96;
+  --text-display-xl--letter-spacing: -0.01em;
+
+  --text-display: 34px;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.01em;
+
+  --text-heading-lg: 28px;
+  --text-heading-lg--line-height: 1.06;
+  --text-heading-lg--letter-spacing: -0.005em;
+
+  --text-heading: 24px;
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: 0em;
+
+  --text-heading-sm: 20px;
+  --text-heading-sm--line-height: 1.16;
+  --text-heading-sm--letter-spacing: 0em;
+
+  --text-subheading: 18px;
+  --text-subheading--line-height: 1.22;
+  --text-subheading--letter-spacing: 0em;
+
+  --text-body: 16px;
+  --text-body--line-height: 1.25;
+  --text-body--letter-spacing: 0em;
+
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.22;
+  --text-body-sm--letter-spacing: 0em;
+
+  --text-caption: 12px;
+  --text-caption--line-height: 1.22;
+  --text-caption--letter-spacing: 0em;
+}
+
+/* Десктопные размеры типографической шкалы (design/tokens.md) */
+@media (min-width: 1280px) {
+  :root {
+    --text-display-xl: 100px;
+    --text-display-xl--line-height: 0.96;
+    --text-display-xl--letter-spacing: -0.02em;
+
+    --text-display: 72px;
+    --text-display--line-height: 1;
+    --text-display--letter-spacing: -0.02em;
+
+    --text-heading-lg: 52px;
+    --text-heading-lg--line-height: 1.06;
+    --text-heading-lg--letter-spacing: -0.015em;
+
+    --text-heading: 38px;
+    --text-heading--line-height: 1.1;
+    --text-heading--letter-spacing: -0.01em;
+
+    --text-heading-sm: 24px;
+    --text-heading-sm--line-height: 1.16;
+    --text-heading-sm--letter-spacing: -0.005em;
+
+    --text-subheading: 18px;
+    --text-subheading--line-height: 1.22;
+    --text-subheading--letter-spacing: -0.18px;
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+}
+
+* {
+  min-width: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
