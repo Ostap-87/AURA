@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -19,7 +20,10 @@ export async function generateMetadata({
   const { locale, industry } = await params;
   const sub = subIndustries.find((s) => s.id === industry);
   if (!sub) return {};
-  return { title: locale === "en" ? sub.name_en : sub.name_ru };
+  return {
+    title: locale === "en" ? sub.name_en : sub.name_ru,
+    alternates: pageAlternates(locale, `/production/${industry}`),
+  };
 }
 
 export default async function SubIndustryPage({

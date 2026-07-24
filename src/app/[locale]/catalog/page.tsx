@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getPublishedCategories, getFactoriesForCategory } from "@/lib/catalog";
@@ -10,7 +11,11 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "catalog" });
-  return { title: t("hubTitle"), description: t("hubDescription") };
+  return {
+    title: t("hubTitle"),
+    description: t("hubDescription"),
+    alternates: pageAlternates(locale, "/catalog"),
+  };
 }
 
 export default async function CatalogHubPage({

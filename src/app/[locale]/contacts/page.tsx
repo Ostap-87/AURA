@@ -1,9 +1,13 @@
+import { pageAlternates } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LeadForm } from "@/components/forms/lead-form";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  return { title: locale === "en" ? "Contacts" : "Контакты" };
+  return {
+    title: locale === "en" ? "Contacts" : "Контакты",
+    alternates: pageAlternates(locale, "/contacts"),
+  };
 }
 
 /** Порядок контактов и подписи адресов — PROJECT.md, раздел 13. */

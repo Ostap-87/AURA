@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -24,7 +25,10 @@ export async function generateMetadata({
   const { locale, equipment: equipmentId } = await params;
   const equipment = equipmentTypes.find((e) => e.id === equipmentId);
   if (!equipment) return {};
-  return { title: locale === "en" ? equipment.name_en : equipment.name_ru };
+  return {
+    title: locale === "en" ? equipment.name_en : equipment.name_ru,
+    alternates: pageAlternates(locale, `/production/equipment/${equipmentId}`),
+  };
 }
 
 export default async function EquipmentPage({

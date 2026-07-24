@@ -1,3 +1,5 @@
+import { eventJsonLd, pageAlternates } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -36,6 +38,7 @@ export async function generateMetadata({
   return {
     title: `${locale === "en" ? tour.title_en : tour.title_ru} — Aura Robotics Tour`,
     description: locale === "en" ? tour.summary_en : tour.summary_ru,
+    alternates: pageAlternates(locale, `/tours/${id}`),
   };
 }
 
@@ -84,6 +87,22 @@ export default async function TourPage({
 
   return (
     <>
+      {/* Event JSON-LD только при заданных датах (PROJECT.md, раздел 12) */}
+      {tour.dateStart && tour.dateEnd && (
+        <JsonLd
+          data={eventJsonLd({
+            locale,
+            path: `/tours/${tour.id}`,
+            name: isEn ? tour.title_en : tour.title_ru,
+            description: isEn ? tour.summary_en : tour.summary_ru,
+            startDate: tour.dateStart,
+            endDate: tour.dateEnd,
+            locationName: tour.cities.join(", "),
+            price: totals.total > 0 ? totals.total : undefined,
+            image: tour.cover,
+          })}
+        />
+      )}
       <section className="mx-auto max-w-(--container-page) px-5 pb-24 pt-10 lg:px-10">
         {/* 1. Шапка */}
         <p className="font-mono text-caption uppercase text-ash">Aura Robotics Tour</p>

@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -35,6 +36,7 @@ export async function generateMetadata({
   return {
     title: locale === "en" ? category.name_en : category.name_ru,
     description: locale === "en" && category.description_en ? category.description_en : category.description_ru,
+    alternates: pageAlternates(locale, `/catalog/${categoryId}`),
   };
 }
 

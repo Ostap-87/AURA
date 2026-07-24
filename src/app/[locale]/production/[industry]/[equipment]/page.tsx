@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -21,7 +22,10 @@ export async function generateMetadata({
   if (!sub || !equipment) return {};
   const subName = locale === "en" ? sub.name_en : sub.name_ru;
   const equipmentName = locale === "en" ? equipment.name_en : equipment.name_ru;
-  return { title: `${equipmentName} — ${subName}` };
+  return {
+    title: `${equipmentName} — ${subName}`,
+    alternates: pageAlternates(locale, `/production/${industry}/${equipmentId}`),
+  };
 }
 
 export default async function ProductionIntersectionPage({

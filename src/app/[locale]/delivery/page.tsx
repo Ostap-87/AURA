@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { MediaGallery } from "@/components/media/media-gallery";
 import { deliverySteps } from "@/lib/content/delivery";
@@ -10,6 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale === "en"
         ? "Six steps from selection to launch: proposal, contract, factory procurement, acceptance testing, logistics, installation."
         : "Шесть шагов от подбора до запуска: КП, договор, закупка на заводе, приёмка и тесты, логистика, монтаж.",
+    alternates: pageAlternates(locale, "/delivery"),
   };
 }
 

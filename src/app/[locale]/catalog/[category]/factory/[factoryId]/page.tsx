@@ -3,6 +3,24 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCategoryById, getFactoryById } from "@/lib/catalog";
 import { FactoryDetail } from "@/components/catalog/factory-detail";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { JsonLd } from "@/components/seo/json-ld";
+import { pageAlternates, productJsonLd } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; category: string; factoryId: string }>;
+}) {
+  const { locale, category: categoryId, factoryId } = await params;
+  const factory = await getFactoryById(factoryId);
+  if (!factory) return {};
+  return {
+    title: factory.name,
+    description:
+      locale === "en" && factory.description_en ? factory.description_en : factory.description_ru,
+    alternates: pageAlternates(locale, `/catalog/${categoryId}/factory/${factoryId}`),
+  };
+}
 
 export default async function FactoryPage({
   params,
@@ -37,6 +55,21 @@ export default async function FactoryPage({
       <div className="mt-8">
         <FactoryDetail factory={factory} category={category} locale={locale} />
       </div>
+      {/* Product с Offer на карточке завода (PROJECT.md, раздел 12); цены — из категории */}
+      <JsonLd
+        data={productJsonLd({
+          locale,
+          path: `/catalog/${categoryId}/factory/${factoryId}`,
+          name: factory.name,
+          description:
+            locale === "en" && factory.description_en
+              ? factory.description_en
+              : factory.description_ru,
+          image: factory.photos[0],
+          priceFrom: category.priceMin,
+          priceTo: category.priceMax,
+        })}
+      />
     </section>
   );
 }

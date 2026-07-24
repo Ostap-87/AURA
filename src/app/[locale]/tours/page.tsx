@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { computeTourStats, getDaysForTour, getPublishedTours } from "@/lib/tours";
@@ -10,6 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale === "en"
         ? "Sourcing trips to China's robotics factories: closed visits, interpreters, technical expertise."
         : "Закупочные поездки по заводам робототехники Китая: закрытые визиты, перевод, техническая экспертиза.",
+    alternates: pageAlternates(locale, "/tours"),
   };
 }
 

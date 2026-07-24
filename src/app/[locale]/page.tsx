@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { MediaSlot } from "@/components/media/media-slot";
@@ -17,6 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale === "en"
         ? "Robots, production equipment and sourcing trips. 15–30% below suppliers with a Russian importer's markup."
         : "Роботы, оборудование для производств и закупочные поездки. На 15–30% дешевле поставщиков с наценкой российского импортёра.",
+    alternates: pageAlternates(locale, "/"),
   };
 }
 

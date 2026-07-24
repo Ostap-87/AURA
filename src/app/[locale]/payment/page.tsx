@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { LinkButton } from "@/components/ui/button";
 
@@ -9,6 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale === "en"
         ? "How the foreign trade scheme works: factory price without importer markup, import registered to your company."
         : "Как работает внешнеторговая схема: заводская цена без наценки импортёра, ввоз оформляется на вашу компанию.",
+    alternates: pageAlternates(locale, "/payment"),
   };
 }
 

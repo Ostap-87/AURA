@@ -1,8 +1,13 @@
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbJsonLd } from "@/lib/seo";
 
 export type Crumb = { label: string; href?: string };
 
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
+  const locale = useLocale();
+
   return (
     <nav aria-label="Breadcrumb" className="text-body-sm text-stone">
       <ol className="flex flex-wrap items-center gap-1">
@@ -21,6 +26,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
           </li>
         ))}
       </ol>
+      <JsonLd data={breadcrumbJsonLd(locale, items)} />
     </nav>
   );
 }

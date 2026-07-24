@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { MediaSlot } from "@/components/media/media-slot";
 import { Link } from "@/i18n/navigation";
@@ -10,6 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale === "en"
         ? "Robotics and production equipment from Chinese factories, delivered to order under a foreign trade contract."
         : "Робототехника и оборудование для производств с китайских заводов, под заказ по внешнеторговому контракту.",
+    alternates: pageAlternates(locale, "/about"),
   };
 }
 

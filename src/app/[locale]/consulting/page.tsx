@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LeadForm } from "@/components/forms/lead-form";
@@ -11,6 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: isEn ? consultingIntro.title_en : consultingIntro.title_ru,
     description: isEn ? consultingIntro.description_en : consultingIntro.description_ru,
+    alternates: pageAlternates(locale, "/consulting"),
   };
 }
 

@@ -7,7 +7,10 @@ import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Logo } from "@/components/layout/logo";
+import { Analytics } from "@/components/analytics/analytics";
+import { JsonLd } from "@/components/seo/json-ld";
 import { getCategories, getConsulting } from "@/lib/data";
+import { organizationJsonLd, siteUrl } from "@/lib/seo";
 import "../globals.css";
 
 const inter = Inter({
@@ -25,6 +28,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Aura Robotics",
   description:
     "Поставка робототехники и оборудования для производств из Китая напрямую с заводов.",
@@ -64,6 +68,8 @@ export default async function LocaleLayout({
           <main>{children}</main>
           <Footer />
         </NextIntlClientProvider>
+        <JsonLd data={organizationJsonLd()} />
+        <Analytics />
       </body>
     </html>
   );

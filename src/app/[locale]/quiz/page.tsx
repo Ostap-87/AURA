@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import type { ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { QuizFlow, type QuizCategoryMeta } from "@/components/quiz/quiz-flow";
@@ -12,7 +13,7 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "quiz" });
-  return { title: t("title") };
+  return { title: t("title"), alternates: pageAlternates(locale, "/quiz") };
 }
 
 export default async function QuizPage({

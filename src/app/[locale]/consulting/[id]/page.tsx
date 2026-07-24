@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -29,6 +30,7 @@ export async function generateMetadata({
       locale === "en" && service.shortDescription_en
         ? service.shortDescription_en
         : service.shortDescription_ru,
+    alternates: pageAlternates(locale, `/consulting/${id}`),
   };
 }
 

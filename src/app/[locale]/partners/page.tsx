@@ -1,3 +1,4 @@
+import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { MediaSlot } from "@/components/media/media-slot";
 import { getFactories } from "@/lib/data";
@@ -11,6 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale === "en"
         ? "The ecosystem behind the catalog: component suppliers, research centers, and technology developers."
         : "Экосистема вокруг каталога: поставщики компонентов, исследовательские центры и разработчики технологий.",
+    alternates: pageAlternates(locale, "/partners"),
   };
 }
 

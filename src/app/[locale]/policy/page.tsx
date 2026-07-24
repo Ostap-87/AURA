@@ -1,9 +1,11 @@
+import { pageAlternates } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   return {
     title: locale === "en" ? "Personal data processing policy" : "Политика обработки персональных данных",
+    alternates: pageAlternates(locale, "/policy"),
   };
 }
 
