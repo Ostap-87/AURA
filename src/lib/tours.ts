@@ -120,3 +120,36 @@ export function daysUntilDeadline(tour: Tour): number | null {
   const diff = Math.ceil((deadline - Date.now()) / 86_400_000);
   return diff >= 0 ? diff : null;
 }
+
+export type TourCityStop = {
+  city: string;
+  cityEn: string;
+  /** Отображаемые названия компаний: имя завода из базы или id с заглавной. */
+  companies: string[];
+  days: number[];
+};
+
+/**
+ * Остановки маршрута для карты: города в порядке первого посещения,
+ * компании — уникальные по городу. Всё из tour_days: новая поездка
+ * или новый город появляются на карте без правки кода (координаты
+ * города — в lib/china-map.ts).
+ */
+export async function getTourCityStops(days: TourDay[]): Promise<TourCityStop[]> {
+  const factories = await getFactories();
+  const nameById = new Map(factories.map((f) => [f.id, f.name]));
+  const stops: TourCityStop[] = [];
+  for (const day of [...days].sort((a, b) => a.dayNumber - b.dayNumber)) {
+    let stop = stops.find((s) => s.city === day.city);
+    if (!stop) {
+      stop = { city: day.city, cityEn: day.cityEn, companies: [], days: [] };
+      stops.push(stop);
+    }
+    stop.days.push(day.dayNumber);
+    for (const id of day.companies) {
+      const name = nameById.get(id) ?? id.charAt(0).toUpperCase() + id.slice(1);
+      if (!stop.companies.includes(name)) stop.companies.push(name);
+    }
+  }
+  return stops;
+}

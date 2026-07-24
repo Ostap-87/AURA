@@ -18,8 +18,10 @@ import {
   getDaysForTour,
   getPublishedTours,
   getTourById,
+  getTourCityStops,
   resolveProgramCompanies,
 } from "@/lib/tours";
+import { ChinaMap } from "@/components/tours/china-map";
 import type { TourContent } from "@/lib/schemas";
 
 export async function generateStaticParams() {
@@ -66,6 +68,7 @@ export default async function TourPage({
   const stats = computeTourStats(tour, days);
   const totals = computeCostTotals(costs);
   const companies = await resolveProgramCompanies(days);
+  const cityStops = await getTourCityStops(days);
   const tForm = await getTranslations({ locale, namespace: "form" });
 
   const forWhom = contentBlock(content, "forWhom");
@@ -213,6 +216,16 @@ export default async function TourPage({
                   {day.note && <p className="mt-1 text-body-sm text-ash">{day.note}</p>}
                 </article>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* 5а. География поездки: карта Китая с маршрутом из tour_days */}
+        {cityStops.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-heading-lg">{isEn ? "Trip geography" : "География поездки"}</h2>
+            <div className="mt-6">
+              <ChinaMap stops={cityStops} locale={locale} />
             </div>
           </div>
         )}
