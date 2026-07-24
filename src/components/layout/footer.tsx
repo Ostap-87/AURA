@@ -1,4 +1,16 @@
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+
+const NAV_LINKS = [
+  { key: "navDelivery", href: "/delivery" },
+  { key: "navPayment", href: "/payment" },
+  { key: "navQuiz", href: "/quiz" },
+  { key: "navFaq", href: "/faq" },
+  { key: "navAbout", href: "/about" },
+  { key: "navPartners", href: "/partners" },
+  { key: "navContacts", href: "/contacts" },
+  { key: "navPolicy", href: "/policy" },
+] as const;
 
 const CONTACTS = {
   whatsapp: { label: "+7 985 874 49 58", href: "https://wa.me/79858744958" },
@@ -26,6 +38,14 @@ export function Footer() {
             <span className="text-caption text-ash">{t("officeTimezone")}</span>
           </div>
         </div>
+
+        <nav className="flex flex-col gap-2 text-body-sm">
+          {NAV_LINKS.map((link) => (
+            <Link key={link.key} href={link.href} className="hover:text-accent">
+              {t(link.key)}
+            </Link>
+          ))}
+        </nav>
 
         <div className="flex flex-col gap-2 text-body-sm">
           <a href={CONTACTS.whatsapp.href} className="hover:text-accent">
