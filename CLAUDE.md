@@ -331,9 +331,45 @@ reference-data.ts`) и `/production/equipment/[equipment]` (10 типов
 временными QA-данными (не в коммите): пункт меню появляется с первой
 услугой, страница услуги — только с fullDescription.
 
+## Этап 10 — заявки, UTM, аналитика, SEO
+
+Этап 9 отложен по решению владельца (нет данных Notion), выполнен
+после этапа 8.
+
+- **Каналы доставки** (`lib/lead-channels.ts`): почта через Resend
+  (RESEND_API_KEY; получатель LEAD_EMAIL_TO, по умолчанию
+  inquairy@aura-robotics.ru), Telegram (TELEGRAM_BOT_TOKEN +
+  TELEGRAM_CHAT_ID), вебхук CRM (LEAD_WEBHOOK_URL). Канал молчит,
+  пока его переменная пуста; журнал `[lead]` пишется всегда — заявка
+  не теряется. Новый канал — функция в CHANNELS, обработчик не меняется.
+- **Ограничение частоты** (`lib/rate-limit.ts`): 5 заявок в минуту с
+  адреса (x-forwarded-for), сверх — 429. Хранилище в памяти процесса.
+- **Ловушка**: любое значение honeypot валидно по схеме, но заполненная
+  ловушка получает тихий `{ok:true}` без доставки (бот не видит ошибку).
+- **UTM**: middleware кладёт utm_* из адресной строки в cookie
+  `aura_utm` на 90 дней; /api/lead читает cookie на сервере и добавляет
+  в заявку. Клиентская форма UTM не трогает.
+- **Аналитика** (`components/analytics/analytics.tsx`): Метрика и GA
+  по NEXT_PUBLIC_YANDEX_METRIKA_ID / NEXT_PUBLIC_GA_ID; пустой
+  идентификатор — на страницу не попадает ни байта.
+- **SEO** (`lib/seo.ts`): NEXT_PUBLIC_SITE_URL (по умолчанию
+  https://aura-robotics.ru) → metadataBase; `pageAlternates(locale,
+  path)` — canonical + hreflang ru/en/x-default на всех маршрутах
+  (x-default = ru, так как ru без префикса). JSON-LD: Organization
+  в layout, BreadcrumbList внутри компонента `Breadcrumbs` (одно место —
+  все страницы с крошками), FAQPage на /faq, Product+AggregateOffer на
+  странице завода (цены из категории — у завода своих цен нет), Event
+  на туре только при заполненных dateStart и dateEnd (сейчас пусты).
+- **sitemap.ts** — обе локали через xhtml:link-альтернативы; динамика
+  из данных: категории, заводы (пара категория×завод, как в маршруте),
+  оси и пересечения производств только существующие, туры, услуги
+  консалтинга с fullDescription. **robots.ts** — закрыт /api.
+- Проверено на живом сервере: cookie 90 дней, UTM в журнале заявки,
+  429 после пятой заявки, honeypot → тихий 200 без записи, canonical
+  и hreflang в обеих локалях, все типы JSON-LD.
+
 ## Что дальше
 
-По плану (PROJECT.md, раздел 14): кейсы/блог/карта/индекс цен/
-контент-API (этап 9 — требует доступ к Notion от владельца) →
-формы/SEO (10) → анимации/адаптив/Lighthouse (11) → боевые
-данные/en-локализация/домен (12).
+По плану: анимации/адаптив/Lighthouse (11) → кейсы/блог/карта/
+контент-API (9 — ждёт доступ к Notion) → боевые данные/
+en-локализация/домен (12).
