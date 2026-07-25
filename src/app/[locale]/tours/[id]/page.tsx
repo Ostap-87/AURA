@@ -18,6 +18,7 @@ import {
   getDaysForTour,
   getPublishedTours,
   getTourById,
+  getFactoryCities,
   getTourCityStops,
   resolveProgramCompanies,
 } from "@/lib/tours";
@@ -69,6 +70,7 @@ export default async function TourPage({
   const totals = computeCostTotals(costs);
   const companies = await resolveProgramCompanies(days);
   const cityStops = await getTourCityStops(days);
+  const factoryCities = await getFactoryCities();
   const tForm = await getTranslations({ locale, namespace: "form" });
 
   const forWhom = contentBlock(content, "forWhom");
@@ -155,7 +157,17 @@ export default async function TourPage({
           </div>
         )}
 
-        {/* 3. Для кого */}
+        {/* 3. География поездки: карта Китая с маршрутом из tour_days */}
+        {cityStops.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-heading-lg">{isEn ? "Trip geography" : "География поездки"}</h2>
+            <div className="mt-6">
+              <ChinaMap stops={cityStops} factoryCities={factoryCities} locale={locale} />
+            </div>
+          </div>
+        )}
+
+        {/* 4. Для кого */}
         {forWhom.length > 0 && (
           <div className="mt-16">
             <h2 className="text-heading-lg">{isEn ? "Who it's for" : "Для кого"}</h2>
@@ -169,7 +181,7 @@ export default async function TourPage({
           </div>
         )}
 
-        {/* 4. Что вы получите */}
+        {/* 5. Что вы получите */}
         {youGet.length > 0 && (
           <div className="mt-16">
             <h2 className="text-heading-lg">{isEn ? "What you get" : "Что вы получите"}</h2>
@@ -184,7 +196,7 @@ export default async function TourPage({
           </div>
         )}
 
-        {/* 5. Программа по дням — вертикальный таймлайн */}
+        {/* 6. Программа по дням — вертикальный таймлайн */}
         {days.length > 0 && (
           <div className="mt-16">
             <h2 className="text-heading-lg">{isEn ? "Day-by-day program" : "Программа по дням"}</h2>
@@ -220,17 +232,7 @@ export default async function TourPage({
           </div>
         )}
 
-        {/* 5а. География поездки: карта Китая с маршрутом из tour_days */}
-        {cityStops.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-heading-lg">{isEn ? "Trip geography" : "География поездки"}</h2>
-            <div className="mt-6">
-              <ChinaMap stops={cityStops} locale={locale} />
-            </div>
-          </div>
-        )}
-
-        {/* 6. Заводы в программе — со ссылками в каталог, где это возможно */}
+        {/* 7. Заводы в программе — со ссылками в каталог, где это возможно */}
         {companies.length > 0 && (
           <div className="mt-16">
             <h2 className="text-heading-lg">{isEn ? "Factories in the program" : "Заводы в программе"}</h2>

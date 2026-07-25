@@ -153,3 +153,21 @@ export async function getTourCityStops(days: TourDay[]): Promise<TourCityStop[]>
   }
   return stops;
 }
+
+/**
+ * Города опубликованных заводов для фона карты: показывают охват базы
+ * вокруг маршрута. Города без координат в справочнике отбрасываются
+ * на стороне карты.
+ */
+export async function getFactoryCities(): Promise<{ city: string; count: number }[]> {
+  const factories = await getFactories();
+  const counts = new Map<string, number>();
+  for (const factory of factories) {
+    if (!factory.published || !factory.city) continue;
+    for (const raw of factory.city.split(",")) {
+      const city = raw.trim();
+      if (city) counts.set(city, (counts.get(city) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()].map(([city, count]) => ({ city, count }));
+}
