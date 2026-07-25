@@ -2,21 +2,59 @@
 
 import { useEffect, useRef, useState } from "react";
 
+type MascotApi = {
+  play: (gesture: "wave" | "jump" | "point" | "nod" | "scan" | "shrug") => void;
+  destroy: (() => void) | null;
+  ready: boolean;
+};
+
+type AuraMascotGlobal = {
+  mount: (opts: Record<string, unknown>) => MascotApi;
+};
+
+declare global {
+  interface Window {
+    AuraMascot?: AuraMascotGlobal;
+  }
+}
+
+const SCRIPT_SRC = "/js/aura-mascot.js";
+
+function loadWidget(): Promise<AuraMascotGlobal> {
+  if (window.AuraMascot) return Promise.resolve(window.AuraMascot);
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT_SRC}"]`);
+    const script = existing ?? document.createElement("script");
+    const onLoad = () => {
+      if (window.AuraMascot) resolve(window.AuraMascot);
+      else reject(new Error("AuraMascot не определился после загрузки"));
+    };
+    script.addEventListener("load", onLoad, { once: true });
+    script.addEventListener("error", () => reject(new Error("aura-mascot.js не загрузился")), {
+      once: true,
+    });
+    if (!existing) {
+      script.src = SCRIPT_SRC;
+      script.defer = true;
+      document.head.appendChild(script);
+    } else if (window.AuraMascot) {
+      resolve(window.AuraMascot);
+    }
+  });
+}
+
 /**
- * Маленький робот-гуманоид в углу экрана (по просьбе владельца,
- * осознанное отступление от лимита анимаций tokens.md):
- * — подпрыгивает, когда при прокрутке сменяется секция;
- * — зрачки следят за курсором;
- * — при наведении машет рукой, при клике делает сальто.
- * Только десктоп с мышью и без prefers-reduced-motion; на мобильных
- * не рендерится вовсе. aria-hidden — для скринридеров его нет.
+ * 3D-маскот владельца (public/js/aura-mascot.js, three.js с CDN).
+ * Виджет сам умеет: следить головой за курсором, махать при наведении,
+ * прыгать по клику, жестикулировать в простое, останавливать рендер
+ * вне экрана. Здесь — только монтирование и привязка жестов к событиям
+ * сайта: смена секции при прокрутке → jump, успешная заявка → wave,
+ * клик по кнопке квиза → point. Только десктоп с мышью и без
+ * prefers-reduced-motion; на мобильных не рендерится и ничего не грузит.
  */
 export function RobotMascot() {
   const [enabled, setEnabled] = useState(false);
-  const [hopping, setHopping] = useState(false);
-  const [flipping, setFlipping] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const pupilsRef = useRef<SVGGElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const mq = window.matchMedia(
@@ -28,109 +66,81 @@ export function RobotMascot() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // Прыжок при смене секции: срабатывает, когда новая секция пересекает
-  // середину экрана
   useEffect(() => {
     if (!enabled) return;
-    let current: Element | null = null;
-    let timer: number | undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting && entry.target !== current) {
-            if (current !== null) {
-              setHopping(true);
-              window.clearTimeout(timer);
-              timer = window.setTimeout(() => setHopping(false), 700);
-            }
-            current = entry.target;
-          }
-        }
-      },
-      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
-    );
-    document.querySelectorAll("main section").forEach((section) => observer.observe(section));
-    return () => {
-      observer.disconnect();
-      window.clearTimeout(timer);
-    };
-  }, [enabled]);
+    const host = hostRef.current;
+    if (!host) return;
 
-  // Зрачки следят за курсором
-  useEffect(() => {
-    if (!enabled) return;
-    const onMove = (event: MouseEvent) => {
-      const root = rootRef.current;
-      const pupils = pupilsRef.current;
-      if (!root || !pupils) return;
-      const rect = root.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height * 0.3;
-      const dx = event.clientX - cx;
-      const dy = event.clientY - cy;
-      const distance = Math.hypot(dx, dy) || 1;
-      const reach = Math.min(2.2, distance / 60);
-      pupils.style.transform = `translate(${(dx / distance) * reach}px, ${(dy / distance) * reach}px)`;
+    let mascot: MascotApi | null = null;
+    let cancelled = false;
+    const cleanups: (() => void)[] = [];
+
+    loadWidget()
+      .then((AuraMascot) => {
+        if (cancelled) return;
+        mascot = AuraMascot.mount({
+          container: host,
+          size: 220,
+          // Фирменные цвета из design/tokens.md (globals.css @theme)
+          palette: { light: 0xf8f6f3, dark: 0x262626, accent: 0xfff65d, glow: 0xfff65d },
+          quality: "high",
+          greetOnLoad: true,
+          reactToScroll: true,
+          autoGestures: true,
+          enableOnMobile: false,
+        });
+
+        // Прыжок при переходе на новую секцию (как у прежнего маскота)
+        let current: Element | null = null;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting && entry.target !== current) {
+                if (current !== null) mascot?.play("jump");
+                current = entry.target;
+              }
+            }
+          },
+          { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+        );
+        document.querySelectorAll("main section").forEach((section) => observer.observe(section));
+        cleanups.push(() => observer.disconnect());
+
+        // Успешная отправка любой формы → помахать
+        const onLead = () => mascot?.play("wave");
+        window.addEventListener("aura:lead-success", onLead);
+        cleanups.push(() => window.removeEventListener("aura:lead-success", onLead));
+
+        // Клик по призыву к квизу → указать
+        const onClick = (event: MouseEvent) => {
+          const target = event.target as HTMLElement | null;
+          if (target?.closest('a[href="/quiz"], a[href="/en/quiz"]')) mascot?.play("point");
+        };
+        document.addEventListener("click", onClick, { capture: true, passive: true });
+        cleanups.push(() =>
+          document.removeEventListener("click", onClick, { capture: true } as EventListenerOptions),
+        );
+      })
+      .catch((error) => {
+        // Без three.js сайт просто живёт без маскота
+        console.warn("[mascot]", error instanceof Error ? error.message : error);
+      });
+
+    return () => {
+      cancelled = true;
+      cleanups.forEach((fn) => fn());
+      mascot?.destroy?.();
     };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => window.removeEventListener("mousemove", onMove);
   }, [enabled]);
 
   if (!enabled) return null;
 
-  const onClick = () => {
-    if (flipping) return;
-    setFlipping(true);
-    window.setTimeout(() => setFlipping(false), 900);
-  };
-
   return (
     <div
-      ref={rootRef}
+      ref={hostRef}
       aria-hidden
-      onClick={onClick}
-      className={`mascot ${hopping ? "mascot-hop" : ""} ${flipping ? "mascot-flip" : ""}`.trim()}
-    >
-      <svg width="64" height="84" viewBox="0 0 64 84" fill="none" className="mascot-body">
-        {/* тень на «земле» */}
-        <ellipse className="mascot-shadow" cx="32" cy="80" rx="16" ry="3.5" fill="var(--color-fog)" />
-        <g className="mascot-inner">
-          {/* антенна */}
-          <line x1="32" y1="10" x2="32" y2="3" stroke="var(--color-ink)" strokeWidth="1.5" />
-          <circle className="mascot-antenna-tip" cx="32" cy="2.5" r="2.5" fill="var(--color-ink)" />
-          {/* голова */}
-          <rect x="16" y="10" width="32" height="24" rx="7" fill="var(--color-canvas)" stroke="var(--color-ink)" strokeWidth="1.5" />
-          {/* глаза */}
-          <circle cx="26" cy="22" r="4.5" fill="var(--color-canvas)" stroke="var(--color-ink)" strokeWidth="1.2" />
-          <circle cx="38" cy="22" r="4.5" fill="var(--color-canvas)" stroke="var(--color-ink)" strokeWidth="1.2" />
-          <g ref={pupilsRef}>
-            <circle cx="26" cy="22" r="2" fill="var(--color-ink)" />
-            <circle cx="38" cy="22" r="2" fill="var(--color-ink)" />
-          </g>
-          {/* веки для моргания */}
-          <g className="mascot-eyelids">
-            <rect x="21" y="17" width="10" height="10" rx="5" fill="var(--color-canvas)" />
-            <rect x="33" y="17" width="10" height="10" rx="5" fill="var(--color-canvas)" />
-          </g>
-          {/* рот */}
-          <line x1="28" y1="29" x2="36" y2="29" stroke="var(--color-ink)" strokeWidth="1.2" strokeLinecap="round" />
-          {/* корпус */}
-          <rect x="20" y="38" width="24" height="24" rx="6" fill="var(--color-canvas)" stroke="var(--color-ink)" strokeWidth="1.5" />
-          <rect x="27" y="44" width="10" height="7" rx="2" fill="none" stroke="var(--color-ink)" strokeWidth="1.2" />
-          {/* левая рука */}
-          <line x1="18" y1="42" x2="12" y2="52" stroke="var(--color-ink)" strokeWidth="1.5" strokeLinecap="round" />
-          {/* правая рука — машет при наведении */}
-          <g className="mascot-arm">
-            <line x1="0" y1="0" x2="7" y2="10" stroke="var(--color-ink)" strokeWidth="1.5" strokeLinecap="round" />
-            <circle cx="8" cy="11.5" r="2" fill="var(--color-ink)" />
-          </g>
-          {/* ноги */}
-          <line x1="26" y1="63" x2="26" y2="72" stroke="var(--color-ink)" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="38" y1="63" x2="38" y2="72" stroke="var(--color-ink)" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="22" y1="73" x2="28" y2="73" stroke="var(--color-ink)" strokeWidth="2" strokeLinecap="round" />
-          <line x1="34" y1="73" x2="40" y2="73" stroke="var(--color-ink)" strokeWidth="2" strokeLinecap="round" />
-        </g>
-      </svg>
-    </div>
+      className="mascot"
+      style={{ position: "fixed", right: 16, bottom: 8, zIndex: 20 }}
+    />
   );
 }

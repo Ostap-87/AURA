@@ -102,6 +102,8 @@ export function LeadForm({ label, fields, hidden = {}, submitLabel, backHref, ba
       });
       if (!response.ok) throw new Error("request_failed");
       setStatus("success");
+      // Сигнал для маскота и будущей аналитики: заявка отправлена
+      window.dispatchEvent(new Event("aura:lead-success"));
     } catch {
       setStatus("error");
     }
