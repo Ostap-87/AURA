@@ -17,7 +17,7 @@ export function CompareBar({ factories }: { factories: Factory[] }) {
 
   const rows: { label: string; render: (f: Factory) => React.ReactNode }[] = [
     { label: t("factoryCountry"), render: (f) => f.country },
-    { label: t("factoryCity"), render: (f) => f.city },
+    { label: t("factoryCity"), render: (f) => f.city ?? f.country },
     { label: t("factoryFounded"), render: (f) => f.founded ?? "—" },
     { label: t("factoryLeadTime"), render: (f) => f.leadTime },
     { label: t("factoryModels"), render: (f) => csvList(f.models).length },

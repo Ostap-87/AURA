@@ -32,7 +32,7 @@ export const factorySchema = z.object({
   name: z.string().min(1),
   nameZh: z.string().optional(),
   country: z.string().min(1),
-  city: z.string().min(1),
+  city: z.string().optional(),
   founded: z.number().int().optional(),
   segments: z.array(segmentEnum).min(1),
   categories: z.array(z.string()),
@@ -55,7 +55,7 @@ export const factoryRowSchema = csvRowSchema(factorySchema, (row) => ({
   name: row.name,
   nameZh: row.nameZh || undefined,
   country: row.country,
-  city: row.city,
+  city: row.city || undefined,
   founded: csvNumber(row.founded ?? ""),
   segments: csvList(row.segments ?? ""),
   categories: csvList(row.categories ?? ""),
@@ -72,15 +72,20 @@ export const factoryRowSchema = csvRowSchema(factorySchema, (row) => ({
   published: csvBoolean(row.published ?? ""),
 }));
 
+/**
+ * Обязательны только идентификатор, названия и сегмент: категория живёт
+ * на сайте с первого дня, а цены, срок и описание владелец добавляет
+ * в таблицу по мере готовности (PROJECT.md, «пустые данные не ломают сайт»).
+ */
 export const categorySchema = z.object({
   id: z.string().min(1),
   name_ru: z.string().min(1),
   name_en: z.string().min(1),
   segment: segmentEnum,
-  priceMin: z.number(),
-  priceMax: z.number(),
-  leadTime: z.string().min(1),
-  description_ru: z.string().min(1),
+  priceMin: z.number().optional(),
+  priceMax: z.number().optional(),
+  leadTime: z.string().optional(),
+  description_ru: z.string().optional(),
   description_en: z.string().optional(),
 });
 export type Category = z.infer<typeof categorySchema>;
@@ -92,8 +97,8 @@ export const categoryRowSchema = csvRowSchema(categorySchema, (row) => ({
   segment: row.segment,
   priceMin: csvNumber(row.priceMin ?? ""),
   priceMax: csvNumber(row.priceMax ?? ""),
-  leadTime: row.leadTime,
-  description_ru: row.description_ru,
+  leadTime: row.leadTime || undefined,
+  description_ru: row.description_ru || undefined,
   description_en: row.description_en || undefined,
 }));
 

@@ -31,9 +31,9 @@ export function parseModels(models: string): string[] {
 }
 
 export type CategoryMetrics = {
-  priceMin: number;
-  priceMax: number;
-  leadTime: string;
+  priceMin?: number;
+  priceMax?: number;
+  leadTime?: string;
   factoryCount: number;
 };
 

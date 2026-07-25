@@ -23,7 +23,8 @@ export async function SupplierCard({ factory, locale }: { factory: Factory; loca
       />
       <h3 className="text-heading-sm">{factory.name}</h3>
       <p className="mt-1 text-body-sm text-stone">
-        {factory.city}, {factory.country}
+        {factory.city ? `${factory.city}, ` : ""}
+        {factory.country}
       </p>
       <p className="mt-3 line-clamp-3 text-body-sm text-stone">{description}</p>
       <p className="mt-3 font-mono text-caption text-ash">

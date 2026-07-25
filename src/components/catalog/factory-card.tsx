@@ -63,7 +63,8 @@ export function FactoryCard({
           {factory.name}
         </h3>
         <p className="mt-1 text-body-sm text-stone">
-          {factory.city}, {factory.country}
+          {factory.city ? `${factory.city}, ` : ""}
+          {factory.country}
         </p>
         {featured && (
           <p className="mt-3 line-clamp-3 text-body-sm text-stone">{factory.description_ru}</p>

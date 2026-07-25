@@ -45,7 +45,7 @@ export async function FactoryDetail({
             {t("factoryCountry")}: {factory.country}
           </span>
           <span>
-            {t("factoryCity")}: {factory.city}
+            {t("factoryCity")}: {factory.city ?? factory.country}
           </span>
           {factory.founded && (
             <span>

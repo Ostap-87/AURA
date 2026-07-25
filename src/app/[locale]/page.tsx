@@ -45,7 +45,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const published = factories.filter((f) => f.published);
   const featured = published.filter((f) => f.featured).slice(0, 3);
   const cityCount = new Set(
-    published.flatMap((f) => f.city.split(",").map((c) => c.trim()).filter(Boolean)),
+    published.flatMap((f) => (f.city ?? "").split(",").map((c) => c.trim()).filter(Boolean)),
   ).size;
   const activeTour = tours.find((t) => t.published && t.status !== "прошла");
   const hasConsulting = consulting.some((c) => c.published);
@@ -241,7 +241,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="border-b border-fog py-3 font-mono text-caption uppercase text-stone">
           <Ticker
             items={published.map((f) => {
-              const city = f.city.split(",")[0]?.trim();
+              const city = f.city?.split(",")[0]?.trim();
               return city ? `${f.name} — ${city}` : f.name;
             })}
           />
