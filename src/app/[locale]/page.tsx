@@ -23,8 +23,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         : "Aura Robotics — робототехника и оборудование от ведущих китайских производителей",
     description:
       locale === "en"
-        ? "Robots, robotics and robotic equipment from leading Chinese manufacturers. Direct partnerships with factories and the best technology solutions for your business and life."
-        : "Роботы, робототехника и роботизированное оборудование от ведущих китайских производителей. Прямое сотрудничество с заводами и лучшие технологические решения для вашего бизнеса и жизни.",
+        ? "Robots and robotic equipment from leading Chinese manufacturers. Direct partnerships with factories and the best technology solutions for your business and life."
+        : "Роботы и роботизированное оборудование от ведущих китайских производителей. Прямое сотрудничество с заводами и лучшие технологические решения для вашего бизнеса и жизни.",
     alternates: pageAlternates(locale, "/"),
   };
 }
@@ -125,8 +125,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className={`flex flex-col gap-6 ${heroDark ? "max-w-2xl" : "lg:w-1/2"}`}>
           <h1 className="text-display break-words">
             {isEn
-              ? "Robots, robotics and robotic equipment from leading Chinese manufacturers"
-              : "Роботы, робототехника и роботизированное оборудование от ведущих китайских производителей"}
+              ? "Robots and robotic equipment from leading Chinese manufacturers"
+              : "Роботы и роботизированное оборудование от ведущих китайских производителей"}
           </h1>
           <p className={`text-subheading ${heroDark ? "text-fog" : "text-stone"}`}>
             {isEn ? (
