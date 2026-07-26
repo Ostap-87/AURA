@@ -84,8 +84,8 @@
     "noResultsLead": "Leave a request"
   },
   "production": {
-    "hubTitle": "Production equipment",
-    "hubDescription": "Equipment for food and related production, direct from Chinese factories.",
+    "hubTitle": "Robotic equipment for production",
+    "hubDescription": "Robotic lines, kitchens and equipment for food and related production, direct from Chinese factories.",
     "subIndustryEmptyTitle": "No factories for this industry yet",
     "subIndustryEmptyText": "We're expanding the supplier base — leave a request and we'll find one manually for your task.",
     "equipmentEmptyTitle": "This category isn't set up yet",

@@ -1,5 +1,5 @@
 import { getCategoryById, getFactoriesForCategory } from "./catalog";
-import { getFactories } from "./data";
+import { getCategories, getFactories } from "./data";
 import { equipmentTypes, subIndustries } from "./reference-data";
 import type { Factory } from "./schemas";
 
@@ -55,4 +55,32 @@ export async function getIntersectionParams(): Promise<{ industry: string; equip
     }
   }
   return params;
+}
+
+export type EquipmentOption = { id: string; name_ru: string; name_en: string };
+
+/**
+ * Типы оборудования для маршрутов /production/equipment/[equipment]:
+ * справочник в коде плюс категории сегмента production из таблицы.
+ * Владелец добавляет категорию в Google Sheets — страница появляется
+ * сама, без правки кода (раньше такие категории отдавали 404).
+ */
+export async function getEquipmentOptions(): Promise<EquipmentOption[]> {
+  const categories = await getCategories();
+  const options: EquipmentOption[] = equipmentTypes.map((e) => ({
+    id: e.id,
+    name_ru: e.name_ru,
+    name_en: e.name_en,
+  }));
+  const known = new Set(options.map((o) => o.id));
+  for (const category of categories) {
+    if (category.segment !== "production" || known.has(category.id)) continue;
+    options.push({ id: category.id, name_ru: category.name_ru, name_en: category.name_en });
+    known.add(category.id);
+  }
+  return options;
+}
+
+export async function getEquipmentOption(id: string): Promise<EquipmentOption | undefined> {
+  return (await getEquipmentOptions()).find((o) => o.id === id);
 }

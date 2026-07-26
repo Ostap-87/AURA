@@ -8,13 +8,15 @@ import { Link } from "@/i18n/navigation";
 import { formatPriceRange } from "@/lib/format";
 import {
   getEquipmentCategory,
+  getEquipmentOption,
+  getEquipmentOptions,
   getFactoriesByEquipment,
   getSubIndustryOptionsForEquipment,
 } from "@/lib/production";
-import { equipmentTypes } from "@/lib/reference-data";
 
-export function generateStaticParams() {
-  return equipmentTypes.map((equipment) => ({ equipment: equipment.id }));
+export async function generateStaticParams() {
+  const options = await getEquipmentOptions();
+  return options.map((equipment) => ({ equipment: equipment.id }));
 }
 
 export async function generateMetadata({
@@ -23,7 +25,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; equipment: string }>;
 }) {
   const { locale, equipment: equipmentId } = await params;
-  const equipment = equipmentTypes.find((e) => e.id === equipmentId);
+  const equipment = await getEquipmentOption(equipmentId);
   if (!equipment) return {};
   return {
     title: locale === "en" ? equipment.name_en : equipment.name_ru,
@@ -38,7 +40,7 @@ export default async function EquipmentPage({
 }) {
   const { locale, equipment: equipmentId } = await params;
   setRequestLocale(locale);
-  const equipment = equipmentTypes.find((e) => e.id === equipmentId);
+  const equipment = await getEquipmentOption(equipmentId);
   if (!equipment) notFound();
 
   const t = await getTranslations({ locale, namespace: "production" });
