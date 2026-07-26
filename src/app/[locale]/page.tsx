@@ -17,11 +17,14 @@ import { getTranslations } from "next-intl/server";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   return {
-    title: locale === "en" ? "Aura Robotics — robotics direct from Chinese factories" : "Aura Robotics — робототехника напрямую с китайских заводов",
+    title:
+      locale === "en"
+        ? "Aura Robotics — robotics and equipment from leading Chinese manufacturers"
+        : "Aura Robotics — робототехника и оборудование от ведущих китайских производителей",
     description:
       locale === "en"
-        ? "Robots, production equipment and sourcing trips. 15–30% below suppliers with a Russian importer's markup."
-        : "Роботы, оборудование для производств и закупочные поездки. На 15–30% дешевле поставщиков с наценкой российского импортёра.",
+        ? "Robots, robotics and robotic equipment from leading Chinese manufacturers. Direct partnerships with factories and the best technology solutions for your business and life."
+        : "Роботы, робототехника и роботизированное оборудование от ведущих китайских производителей. Прямое сотрудничество с заводами и лучшие технологические решения для вашего бизнеса и жизни.",
     alternates: pageAlternates(locale, "/"),
   };
 }
@@ -120,21 +123,23 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           }`}
         >
         <div className={`flex flex-col gap-6 ${heroDark ? "max-w-2xl" : "lg:w-1/2"}`}>
-          <h1 className="text-display-xl">
-            {isEn ? "Robotics direct from Chinese factories" : "Робототехника напрямую с китайских заводов"}
+          <h1 className="text-display break-words">
+            {isEn
+              ? "Robots, robotics and robotic equipment from leading Chinese manufacturers"
+              : "Роботы, робототехника и роботизированное оборудование от ведущих китайских производителей"}
           </h1>
           <p className={`text-subheading ${heroDark ? "text-fog" : "text-stone"}`}>
             {isEn ? (
               <>
-                Robots, production equipment and sourcing trips.{" "}
-                <mark className="hero-mark">15–30% below</mark> suppliers with a Russian
-                importer&apos;s markup — because there is no importer.
+                Direct partnerships with factories and{" "}
+                <mark className="hero-mark">the best technology solutions</mark> for your
+                business and life.
               </>
             ) : (
               <>
-                Роботы, оборудование для производств и закупочные поездки.{" "}
-                <mark className="hero-mark">На 15–30% дешевле</mark> поставщиков с наценкой
-                российского импортёра — потому что импортёра в цепочке нет.
+                Прямое сотрудничество с заводами и{" "}
+                <mark className="hero-mark">лучшие технологические решения</mark> для вашего
+                бизнеса и жизни.
               </>
             )}
           </p>
