@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getCategories, getConsulting, getFactories } from "@/lib/data";
+import { getCases, getCategories, getConsulting, getFactories } from "@/lib/data";
 import { getPublishedTours } from "@/lib/tours";
 import { getIntersectionParams, getProductionFactories } from "@/lib/production";
 import { industriesContent } from "@/lib/content/industries-content";
@@ -18,11 +18,12 @@ function entry(path: string): MetadataRoute.Sitemap[number] {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [categories, factories, consulting, tours, intersections, productionFactories] =
+  const [categories, factories, consulting, cases, tours, intersections, productionFactories] =
     await Promise.all([
       getCategories(),
       getFactories(),
       getConsulting(),
+      getCases(),
       getPublishedTours(),
       getIntersectionParams(),
       getProductionFactories(),
@@ -35,6 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/quiz",
     "/tours",
     "/consulting",
+    "/cases",
     "/delivery",
     "/payment",
     "/about",
@@ -77,6 +79,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const tour of tours) paths.push(`/tours/${tour.id}`);
   for (const service of consulting) {
     if (service.published && service.fullDescription_ru) paths.push(`/consulting/${service.id}`);
+  }
+  for (const item of cases) {
+    if (item.published && item.fullText_ru) paths.push(`/cases/${item.id}`);
   }
 
   return paths.map(entry);

@@ -10,6 +10,7 @@ import path from "node:path";
 import { z } from "zod";
 import { parseCsv } from "../src/lib/csv";
 import {
+  caseRowSchema,
   categoryRowSchema,
   consultingRowSchema,
   factoryRowSchema,
@@ -39,6 +40,7 @@ const sheets: Sheet[] = [
   { name: "tour_costs", envVar: "GOOGLE_SHEETS_CSV_TOUR_COSTS", localFile: "tour_costs.csv", outputFile: "tourCosts.json", rowSchema: tourCostRowSchema },
   { name: "tour_content", envVar: "GOOGLE_SHEETS_CSV_TOUR_CONTENT", localFile: "tour_content.csv", outputFile: "tourContent.json", rowSchema: tourContentRowSchema },
   { name: "consulting", envVar: "GOOGLE_SHEETS_CSV_CONSULTING", localFile: "consulting.csv", outputFile: "consulting.json", rowSchema: consultingRowSchema },
+  { name: "cases", envVar: "GOOGLE_SHEETS_CSV_CASES", localFile: "cases.csv", outputFile: "cases.json", rowSchema: caseRowSchema },
 ];
 
 async function loadCsvText(sheet: Sheet): Promise<string> {

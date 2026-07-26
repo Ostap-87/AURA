@@ -234,6 +234,58 @@ export const tourContentRowSchema = csvRowSchema(tourContentSchema, (row) => ({
   text_en: row.text_en || undefined,
 }));
 
+export const caseTypeEnum = z.enum(["поставка", "экспедиция", "отзыв"]);
+
+/**
+ * Кейсы поставок и экспедиций плюс отзывы клиентов — одна таблица,
+ * различаются полем type. Полноценная страница появляется только при
+ * заполненном fullText (тот же приём, что у consulting.fullDescription).
+ */
+export const caseSchema = z.object({
+  id: z.string().min(1),
+  type: caseTypeEnum,
+  title_ru: z.string().min(1),
+  title_en: z.string().min(1),
+  client_ru: z.string().optional(),
+  client_en: z.string().optional(),
+  summary_ru: z.string().min(1),
+  summary_en: z.string().optional(),
+  fullText_ru: z.string().optional(),
+  fullText_en: z.string().optional(),
+  quote_ru: z.string().optional(),
+  quote_en: z.string().optional(),
+  author_ru: z.string().optional(),
+  author_en: z.string().optional(),
+  photo: z.string().optional(),
+  photoCaption: z.string().optional(),
+  date: z.string().optional(),
+  order: z.number().int(),
+  published: z.boolean(),
+});
+export type CaseStory = z.infer<typeof caseSchema>;
+
+export const caseRowSchema = csvRowSchema(caseSchema, (row) => ({
+  id: row.id,
+  type: row.type,
+  title_ru: row.title_ru,
+  title_en: row.title_en,
+  client_ru: row.client_ru || undefined,
+  client_en: row.client_en || undefined,
+  summary_ru: row.summary_ru,
+  summary_en: row.summary_en || undefined,
+  fullText_ru: row.fullText_ru || undefined,
+  fullText_en: row.fullText_en || undefined,
+  quote_ru: row.quote_ru || undefined,
+  quote_en: row.quote_en || undefined,
+  author_ru: row.author_ru || undefined,
+  author_en: row.author_en || undefined,
+  photo: row.photo || undefined,
+  photoCaption: row.photoCaption || undefined,
+  date: row.date || undefined,
+  order: csvNumber(row.order ?? ""),
+  published: csvBoolean(row.published ?? ""),
+}));
+
 export const consultingSchema = z.object({
   id: z.string().min(1),
   title_ru: z.string().min(1),

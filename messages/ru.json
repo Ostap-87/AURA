@@ -30,7 +30,8 @@
     "navAbout": "О компании",
     "navPartners": "Партнёры и R&D",
     "navContacts": "Контакты",
-    "navPolicy": "Политика обработки данных"
+    "navPolicy": "Политика обработки данных",
+    "navCases": "Кейсы и отзывы"
   },
   "logo": {
     "alt": "Aura Robotics"
@@ -40,7 +41,8 @@
     "catalog": "Роботы",
     "production": "Оборудование для производств",
     "industries": "Отрасли",
-    "services": "Услуги"
+    "services": "Услуги",
+    "cases": "Кейсы и отзывы"
   },
   "faq": {
     "title": "Вопросы и ответы",
@@ -144,5 +146,12 @@
     "successUrgent": "Если вопрос срочный — напишите в Telegram: @ostapdotcenko",
     "successTelegram": "Написать в Telegram",
     "successBackCatalog": "Вернуться в каталог"
+  },
+  "cases": {
+    "emptyTitle": "Кейсы пока готовятся",
+    "emptyText": "Здесь появятся истории поставок и закупочных поездок с фото и результатами — как только они будут готовы.",
+    "backToCases": "Ко всем кейсам",
+    "clientLabel": "Клиент",
+    "dateLabel": "Дата"
   }
 }

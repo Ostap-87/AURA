@@ -30,7 +30,8 @@
     "navAbout": "About",
     "navPartners": "Partners and R&D",
     "navContacts": "Contacts",
-    "navPolicy": "Data processing policy"
+    "navPolicy": "Data processing policy",
+    "navCases": "Cases and reviews"
   },
   "logo": {
     "alt": "Aura Robotics"
@@ -40,7 +41,8 @@
     "catalog": "Robots",
     "production": "Production equipment",
     "industries": "Industries",
-    "services": "Services"
+    "services": "Services",
+    "cases": "Cases and reviews"
   },
   "faq": {
     "title": "Questions and answers",
@@ -144,5 +146,12 @@
     "successUrgent": "If it's urgent, message us on Telegram: @ostapdotcenko",
     "successTelegram": "Message on Telegram",
     "successBackCatalog": "Back to catalog"
+  },
+  "cases": {
+    "emptyTitle": "Cases are being prepared",
+    "emptyText": "Delivery and sourcing trip stories — with photos and results — will appear here once they're ready.",
+    "backToCases": "Back to cases",
+    "clientLabel": "Client",
+    "dateLabel": "Date"
   }
 }
