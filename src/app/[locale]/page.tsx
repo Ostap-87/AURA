@@ -63,7 +63,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     },
     {
       href: "/production",
-      title: isEn ? "Production equipment" : "Оборудование для производств",
+      title: isEn ? "Robotic equipment for production" : "Роботизированное оборудование для производств",
       text: isEn
         ? "Food processing and adjacent industries: lines, central kitchens, packaging, washing."
         : "Пищепром и смежные отрасли: линии, центральные кухни, фасовка, мойка.",
