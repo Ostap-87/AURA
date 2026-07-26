@@ -122,11 +122,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             heroDark ? "lg:min-h-[72vh] lg:py-28" : "lg:py-24"
           }`}
         >
-        <div className={`flex flex-col gap-6 ${heroDark ? "max-w-2xl" : "lg:w-1/2"}`}>
+        <div className={`flex flex-col gap-6 ${heroDark ? "max-w-2xl" : "lg:w-3/5"}`}>
           <h1 className="text-display break-words">
-            {isEn
-              ? "Robots and robotic equipment from leading Chinese manufacturers"
-              : "Роботы и роботизированное оборудование от ведущих китайских производителей"}
+            {isEn ? (
+              "Robots and robotic equipment from leading Chinese manufacturers"
+            ) : (
+              <>
+                Роботы и <span className="whitespace-nowrap">роботизированное</span> оборудование
+                от ведущих китайских производителей
+              </>
+            )}
           </h1>
           <p className={`text-subheading ${heroDark ? "text-fog" : "text-stone"}`}>
             {isEn ? (
@@ -170,7 +175,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
         {!heroDark && (
-          <div className="lg:w-1/2">
+          <div className="lg:w-2/5">
             <MediaSlot
               aspect="4/3"
               emptyBehavior="placeholder"
