@@ -230,10 +230,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           {published.length > 0 && (
             <div className="mt-10 flex flex-wrap gap-x-16 gap-y-6">
               <div>
-                <p className="font-mono text-heading-lg">
-                  <CountUp value={published.length} />
-                </p>
-                <p className="mt-1 text-body-sm text-fog">{isEn ? "factories in the base" : "заводов в базе"}</p>
+                <p className="font-mono text-heading-lg">{isEn ? "100+" : "Более 100"}</p>
+                <p className="mt-1 text-body-sm text-fog">{isEn ? "manufacturers" : "производителей"}</p>
               </div>
               <div>
                 <p className="font-mono text-heading-lg">
