@@ -286,6 +286,37 @@ export const caseRowSchema = csvRowSchema(caseSchema, (row) => ({
   published: csvBoolean(row.published ?? ""),
 }));
 
+/**
+ * Флагманские модели заводов — опциональная витрина поверх свободного текстового
+ * поля factories.models. Обязательны только id/factoryId/имя: карточка модели
+ * без описания и фото всё равно осмысленна (просто покажет только название),
+ * а описание и фото владелец добавляет по мере готовности материалов.
+ */
+export const modelSchema = z.object({
+  id: z.string().min(1),
+  factoryId: z.string().min(1),
+  name_ru: z.string().min(1),
+  name_en: z.string().optional(),
+  description_ru: z.string().optional(),
+  description_en: z.string().optional(),
+  photo: z.string().optional(),
+  order: z.number().int(),
+  published: z.boolean(),
+});
+export type RobotModel = z.infer<typeof modelSchema>;
+
+export const modelRowSchema = csvRowSchema(modelSchema, (row) => ({
+  id: row.id,
+  factoryId: row.factoryId,
+  name_ru: row.name_ru,
+  name_en: row.name_en || undefined,
+  description_ru: row.description_ru || undefined,
+  description_en: row.description_en || undefined,
+  photo: row.photo || undefined,
+  order: csvNumber(row.order ?? ""),
+  published: csvBoolean(row.published ?? ""),
+}));
+
 export const consultingSchema = z.object({
   id: z.string().min(1),
   title_ru: z.string().min(1),

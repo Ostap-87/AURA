@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { CaseStory, Category, Consulting, Factory, Tour, TourCost, TourContent, TourDay } from "./schemas";
+import type { CaseStory, Category, Consulting, Factory, RobotModel, Tour, TourCost, TourContent, TourDay } from "./schemas";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 
@@ -19,6 +19,7 @@ async function readJson<T>(fileName: string): Promise<T[]> {
 }
 
 export const getFactories = () => readJson<Factory>("factories.json");
+export const getModels = () => readJson<RobotModel>("models.json");
 export const getCategories = () => readJson<Category>("categories.json");
 export const getTours = () => readJson<Tour>("tours.json");
 export const getTourDays = () => readJson<TourDay>("tourDays.json");

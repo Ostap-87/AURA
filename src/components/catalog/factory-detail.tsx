@@ -1,9 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { MediaGallery } from "@/components/media/media-gallery";
 import { MediaSlot } from "@/components/media/media-slot";
-import { LeadForm } from "@/components/forms/lead-form";
+import { FactoryLeadForm } from "@/components/catalog/factory-lead-form";
 import { Link } from "@/i18n/navigation";
 import { parseModels } from "@/lib/catalog";
+import { getModels } from "@/lib/data";
 import { formatPriceRange } from "@/lib/format";
 import { industryTagLabel } from "@/lib/industry-tags";
 import { getActiveTourBadge, tourBadgeText } from "@/lib/tours";
@@ -20,7 +21,17 @@ export async function FactoryDetail({
 }) {
   const t = await getTranslations({ locale, namespace: "catalog" });
   const tForm = await getTranslations({ locale, namespace: "form" });
-  const models = parseModels(factory.models);
+  const isEn = locale === "en";
+  const plainModelNames = parseModels(factory.models);
+  const structuredModels = (await getModels())
+    .filter((m) => m.factoryId === factory.id && m.published)
+    .sort((a, b) => a.order - b.order)
+    .map((m) => ({
+      id: m.id,
+      name: isEn && m.name_en ? m.name_en : m.name_ru,
+      description: isEn && m.description_en ? m.description_en : m.description_ru,
+      photo: m.photo,
+    }));
   const description = locale === "en" && factory.description_en ? factory.description_en : factory.description_ru;
 
   // Плашка «Этот завод в программе тура [даты]» — связка каталога и тура (5.3)
@@ -88,22 +99,17 @@ export async function FactoryDetail({
 
       <MediaGallery photos={factory.photos} captions={factory.photoCaptions} aspect="4/3" />
 
-      <LeadForm
-        label="catalog_modal"
-        fields={[
-          {
-            type: "select",
-            name: "model",
-            label: tForm("modelLabel"),
-            options: [
-              { value: "unknown", label: tForm("modelUnknown") },
-              ...models.map((model) => ({ value: model, label: model })),
-            ],
-          },
-          { type: "text", name: "name", label: tForm("nameLabel") },
-          { type: "tel", name: "phone", label: tForm("phoneLabel") },
-          { type: "textarea", name: "task", label: tForm("taskLabel"), placeholder: tForm("taskPlaceholder") },
-        ]}
+      <FactoryLeadForm
+        models={structuredModels}
+        plainModelNames={plainModelNames}
+        labels={{
+          modelLabel: tForm("modelLabel"),
+          modelUnknown: tForm("modelUnknown"),
+          nameLabel: tForm("nameLabel"),
+          phoneLabel: tForm("phoneLabel"),
+          emailLabel: tForm("emailLabel"),
+          companyLabel: tForm("companyLabel"),
+        }}
         hidden={{ factory: factory.id, category: category.id }}
         submitLabel={tForm("submitGetQuote")}
         backHref={`/catalog/${category.id}`}

@@ -129,6 +129,8 @@
     "automateLabel": "What needs automating",
     "modelLabel": "Model",
     "modelUnknown": "Not sure — match it to my task",
+    "emailLabel": "Email",
+    "companyLabel": "Company name",
     "submitGetQuote": "Get a quote",
     "submitRequestQuote": "Request a quote",
     "submitPreciseQuote": "Get a precise quote",

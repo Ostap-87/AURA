@@ -14,6 +14,7 @@ import {
   categoryRowSchema,
   consultingRowSchema,
   factoryRowSchema,
+  modelRowSchema,
   tourCostRowSchema,
   tourContentRowSchema,
   tourDayRowSchema,
@@ -34,6 +35,7 @@ type Sheet = {
 
 const sheets: Sheet[] = [
   { name: "factories", envVar: "GOOGLE_SHEETS_CSV_FACTORIES", localFile: "factories.csv", outputFile: "factories.json", rowSchema: factoryRowSchema },
+  { name: "models", envVar: "GOOGLE_SHEETS_CSV_MODELS", localFile: "models.csv", outputFile: "models.json", rowSchema: modelRowSchema },
   { name: "categories", envVar: "GOOGLE_SHEETS_CSV_CATEGORIES", localFile: "categories.csv", outputFile: "categories.json", rowSchema: categoryRowSchema },
   { name: "tours", envVar: "GOOGLE_SHEETS_CSV_TOURS", localFile: "tours.csv", outputFile: "tours.json", rowSchema: tourRowSchema },
   { name: "tour_days", envVar: "GOOGLE_SHEETS_CSV_TOUR_DAYS", localFile: "tour_days.csv", outputFile: "tourDays.json", rowSchema: tourDayRowSchema },

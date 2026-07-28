@@ -18,6 +18,7 @@ next-env.d.ts
 /data/tourContent.json
 /data/consulting.json
 /data/cases.json
+/data/models.json
 
 # env
 .env*.local

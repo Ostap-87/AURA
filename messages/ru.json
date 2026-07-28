@@ -129,6 +129,8 @@
     "automateLabel": "Что нужно автоматизировать",
     "modelLabel": "Модель",
     "modelUnknown": "Не знаю — подберите под задачу",
+    "emailLabel": "E-mail",
+    "companyLabel": "Название компании",
     "submitGetQuote": "Получить расчёт",
     "submitRequestQuote": "Запросить расчёт",
     "submitPreciseQuote": "Получить точный расчёт",
