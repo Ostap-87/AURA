@@ -87,8 +87,8 @@ export const faqSections: FaqSection[] = [
         id: "lead-time",
         q_ru: "Сколько занимает поставка?",
         q_en: "How long does delivery take?",
-        a_ru: "Срок указан на карточке каждой категории и завода — обычно от 6 до 18 недель с момента оплаты, в зависимости от оборудования и загрузки производства. Срок включает производство, тесты и логистику.",
-        a_en: "The lead time is shown on each category and factory card — usually 6 to 18 weeks from payment, depending on the equipment and factory load. It includes production, testing and logistics.",
+        a_ru: "Срок указан на карточке каждой категории и завода. Роботы — 4–7 недель с момента оплаты, оборудование для производств — 8–16 недель: там больше нюансов интеграции. Срок включает производство, тесты и логистику.",
+        a_en: "The lead time is shown on each category and factory card. Robots — 4–7 weeks from payment; production equipment — 8–16 weeks, since there's more integration involved. It includes production, testing and logistics.",
       },
       {
         id: "track",
