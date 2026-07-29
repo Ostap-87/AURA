@@ -80,7 +80,12 @@ export default async function SubIndustryPage({
       ) : (
         <div className="mt-10 grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
           {factories.map((factory) => (
-            <SupplierCard key={factory.id} factory={factory} locale={locale} />
+            <SupplierCard
+              key={factory.id}
+              factory={factory}
+              locale={locale}
+              href={`/production/factory/${factory.id}`}
+            />
           ))}
         </div>
       )}

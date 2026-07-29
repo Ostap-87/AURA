@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { getCases, getCategories, getConsulting, getFactories } from "@/lib/data";
 import { getPublishedTours } from "@/lib/tours";
-import { getIntersectionParams, getProductionFactories } from "@/lib/production";
+import { getEquipmentOptions, getIntersectionParams, getProductionFactories } from "@/lib/production";
 import { industriesContent } from "@/lib/content/industries-content";
 import { servicesContent } from "@/lib/content/services-content";
-import { subIndustries, equipmentTypes } from "@/lib/reference-data";
+import { subIndustries } from "@/lib/reference-data";
 import { localeUrl } from "@/lib/seo";
 
 /** Обе локали через hreflang-альтернативы (PROJECT.md, раздел 12). */
@@ -66,12 +66,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const sub of subIndustries) {
       if (subIds.has(sub.id)) paths.push(`/production/${sub.id}`);
     }
+    // Справочник кода + категории сегмента production из таблицы (та же
+    // логика, что и в generateStaticParams — иначе категории вроде
+    // centralkitchen/smartchef не попадут в карту сайта).
+    const equipmentOptions = await getEquipmentOptions();
     const equipmentIds = new Set(productionFactories.flatMap((f) => f.categories));
-    for (const equipment of equipmentTypes) {
+    for (const equipment of equipmentOptions) {
       if (equipmentIds.has(equipment.id)) paths.push(`/production/equipment/${equipment.id}`);
     }
     for (const pair of intersections) {
       paths.push(`/production/${pair.industry}/${pair.equipment}`);
+    }
+    for (const factory of productionFactories) {
+      paths.push(`/production/factory/${factory.id}`);
     }
   }
 

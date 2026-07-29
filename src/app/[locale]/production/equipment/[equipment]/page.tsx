@@ -112,7 +112,12 @@ export default async function EquipmentPage({
           <h2 className="mb-4 text-heading-sm">{t("suppliersTitle")}</h2>
           <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
             {factories.map((factory) => (
-              <SupplierCard key={factory.id} factory={factory} locale={locale} />
+              <SupplierCard
+                key={factory.id}
+                factory={factory}
+                locale={locale}
+                href={`/production/factory/${factory.id}`}
+              />
             ))}
           </div>
         </div>
