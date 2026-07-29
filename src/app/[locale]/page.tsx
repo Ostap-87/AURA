@@ -11,6 +11,8 @@ import { LinkButton } from "@/components/ui/button";
 import { getConsulting, getFactories, getTours } from "@/lib/data";
 import { getHeroMedia } from "@/lib/hero-media";
 import { HeroBackground } from "@/components/home/hero-background";
+import { CategoryCarousel } from "@/components/home/category-carousel";
+import { getFactoriesForCategory, getPublishedCategories } from "@/lib/catalog";
 import { deliverySteps } from "@/lib/content/delivery";
 import { getTranslations } from "next-intl/server";
 
@@ -35,11 +37,25 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const isEn = locale === "en";
   const tForm = await getTranslations({ locale, namespace: "form" });
 
-  const [factories, tours, consulting] = await Promise.all([
+  const [factories, tours, consulting, robotCategories] = await Promise.all([
     getFactories(),
     getTours(),
     getConsulting(),
+    getPublishedCategories("robots"),
   ]);
+
+  // Только категории, где уже есть заводы — карусель на главной ведёт
+  // в живой раздел каталога, а не на пустую страницу.
+  const carouselItems = (
+    await Promise.all(
+      robotCategories.map(async (category) => ({
+        id: category.id,
+        name: isEn ? category.name_en : category.name_ru,
+        photo: category.photo,
+        factoryCount: (await getFactoriesForCategory(category.id)).length,
+      })),
+    )
+  ).filter((item) => item.factoryCount > 0);
 
   const hero = getHeroMedia();
   // Тёмный вариант хиро включается появлением видео или постера в public/media
@@ -113,7 +129,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       {/* Хиро: светлая секция со слотом-чертежом; при наличии видео/постера
           в public/media — тёмная, с фоновым видео и белым текстом */}
-      <section className={heroDark ? "relative bg-ink text-canvas" : undefined}>
+      <section className={`[overflow-x:clip] ${heroDark ? "relative bg-ink text-canvas" : ""}`}>
         {heroDark && (
           <HeroBackground webm={hero.video?.webm} mp4={hero.video?.mp4} poster={hero.poster} />
         )}
@@ -175,12 +191,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
         {!heroDark && (
-          <div className="lg:w-2/5">
-            <MediaSlot
-              aspect="4/3"
-              emptyBehavior="placeholder"
-              placeholderLabel={isEn ? "Factory footage — in production" : "Съёмка с производств — в подготовке"}
-            />
+          <div className="overflow-visible lg:w-2/5">
+            {carouselItems.length > 0 ? (
+              <CategoryCarousel
+                items={carouselItems}
+                emptyLabel={isEn ? "Photo — in production" : "Фото — в подготовке"}
+                ariaLabel={isEn ? "Robot categories" : "Категории роботов"}
+              />
+            ) : (
+              <MediaSlot
+                aspect="4/3"
+                emptyBehavior="placeholder"
+                placeholderLabel={isEn ? "Factory footage — in production" : "Съёмка с производств — в подготовке"}
+              />
+            )}
           </div>
         )}
         </div>

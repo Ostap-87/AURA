@@ -87,6 +87,7 @@ export const categorySchema = z.object({
   leadTime: z.string().optional(),
   description_ru: z.string().optional(),
   description_en: z.string().optional(),
+  photo: z.string().optional(),
 });
 export type Category = z.infer<typeof categorySchema>;
 
@@ -100,6 +101,7 @@ export const categoryRowSchema = csvRowSchema(categorySchema, (row) => ({
   leadTime: row.leadTime || undefined,
   description_ru: row.description_ru || undefined,
   description_en: row.description_en || undefined,
+  photo: row.photo || undefined,
 }));
 
 export const tourStatusEnum = z.enum(["анонс", "набор", "закрыта", "прошла"]);
