@@ -74,7 +74,13 @@ export function FactoryLeadForm({
 
           {activeModel && (
             <div className="rounded-card border border-fog bg-warm-parchment p-4">
-              <MediaSlot src={activeModel.photo} aspect="4/3" emptyBehavior="hidden" className="mb-3" />
+              <MediaSlot
+                src={activeModel.photo}
+                caption={activeModel.photo ? activeModel.name : undefined}
+                aspect="4/3"
+                emptyBehavior="hidden"
+                className="mb-3"
+              />
               <p className="text-heading-sm">{activeModel.name}</p>
               {activeModel.description && (
                 <p className="mt-2 text-body-sm text-stone">{activeModel.description}</p>
