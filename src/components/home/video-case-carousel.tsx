@@ -132,10 +132,18 @@ export function VideoCaseCarousel({
                 {!item.video && (
                   <p className="font-mono text-caption uppercase text-ash">{emptyLabel}</p>
                 )}
-                <p className={`text-body-sm font-medium ${item.video ? "text-canvas" : "text-ink"}`}>
-                  {item.title}
-                </p>
+                {item.title && (
+                  <p className={`text-body-sm font-medium ${item.video ? "text-canvas" : "text-ink"}`}>
+                    {item.title}
+                  </p>
+                )}
               </div>
+              {/* Затемнение дальних карточек — «уходят в полукруг», а не просто тускнеют целиком */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-ink"
+                style={{ opacity: Math.min(absOffset * 0.32, 0.7) }}
+              />
             </>
           );
 

@@ -62,7 +62,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   // Карусель видео-кейсов на главной — только опубликованные записи
   // с загруженным видео; карточка кликабельна, только если у кейса
   // есть полноценная страница (тот же приём, что на /cases).
-  const videoCaseItems = cases
+  const publishedVideoCases = cases
     .filter((c) => c.published && c.video)
     .sort((a, b) => a.order - b.order)
     .map((c) => ({
@@ -71,6 +71,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       video: c.video,
       hasDetail: Boolean(c.fullText_ru),
     }));
+  // Пока в таблице нет ни одного кейса с видео — карусель всё равно
+  // должна крутиться и показывать «слоты» под будущие ролики, а не
+  // стоять текстовой заглушкой; плейсхолдеры анонимны (без выдуманных
+  // названий кейсов) и некликабельны.
+  const videoCaseItems =
+    publishedVideoCases.length > 0
+      ? publishedVideoCases
+      : Array.from({ length: 6 }, (_, i) => ({
+          id: `placeholder-${i}`,
+          title: "",
+          video: undefined,
+          hasDetail: false,
+        }));
 
   const hero = getHeroMedia();
   // Тёмный вариант хиро включается появлением видео или постера в public/media
@@ -250,7 +263,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {/* Видео-кейсы — полноширинная 3D-карусель, крутится сама */}
+      {/* Видео-кейсы — полноширинная 3D-карусель, крутится сама.
+          Пока в таблице нет ни одного кейса с видео — крутятся анонимные
+          пустые слоты (videoCaseItems), а не текстовая заглушка. */}
       <section className="[overflow-x:clip] bg-canvas py-16">
         <div className="mx-auto max-w-(--container-page) px-5 lg:px-10">
           <div className="flex flex-wrap items-baseline justify-between gap-4">
@@ -259,28 +274,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               {isEn ? "All cases" : "Смотреть все кейсы"}
             </Link>
           </div>
+          {publishedVideoCases.length === 0 && (
+            <p className="mt-2 max-w-2xl text-body text-stone">
+              {isEn
+                ? "We're preparing footage from deliveries and factory trips — the slots below will fill up soon."
+                : "Готовим ролики с поставок и поездок на заводы — слоты ниже скоро заполнятся."}
+            </p>
+          )}
         </div>
         <div className="mt-10">
-          {videoCaseItems.length > 0 ? (
-            <VideoCaseCarousel
-              items={videoCaseItems}
-              emptyLabel={isEn ? "Video — in production" : "Видео — в подготовке"}
-              ariaLabel={isEn ? "Case videos" : "Видео с кейсами"}
-            />
-          ) : (
-            <div className="mx-auto max-w-(--container-page) px-5 lg:px-10">
-              <div className="rounded-card border border-fog bg-warm-parchment p-8 text-center">
-                <p className="text-heading-sm">
-                  {isEn ? "Case videos are coming soon" : "Видео с кейсами появятся здесь"}
-                </p>
-                <p className="mt-2 text-body text-stone">
-                  {isEn
-                    ? "We're preparing footage from deliveries and factory trips."
-                    : "Готовим ролики с поставок и поездок на заводы."}
-                </p>
-              </div>
-            </div>
-          )}
+          <VideoCaseCarousel
+            items={videoCaseItems}
+            emptyLabel={isEn ? "Video — in production" : "Видео — в подготовке"}
+            ariaLabel={isEn ? "Case videos" : "Видео с кейсами"}
+          />
         </div>
       </section>
 
