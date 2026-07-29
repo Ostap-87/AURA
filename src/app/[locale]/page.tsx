@@ -8,10 +8,11 @@ import { SupplierCard } from "@/components/shared/supplier-card";
 import { CountUp } from "@/components/quiz/count-up";
 import { LeadForm } from "@/components/forms/lead-form";
 import { LinkButton } from "@/components/ui/button";
-import { getConsulting, getFactories, getTours } from "@/lib/data";
+import { getCases, getConsulting, getFactories, getTours } from "@/lib/data";
 import { getHeroMedia } from "@/lib/hero-media";
 import { HeroBackground } from "@/components/home/hero-background";
 import { CategoryCarousel } from "@/components/home/category-carousel";
+import { VideoCaseCarousel } from "@/components/home/video-case-carousel";
 import { getFactoriesForCategory, getPublishedCategories } from "@/lib/catalog";
 import { deliverySteps } from "@/lib/content/delivery";
 import { getTranslations } from "next-intl/server";
@@ -37,11 +38,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const isEn = locale === "en";
   const tForm = await getTranslations({ locale, namespace: "form" });
 
-  const [factories, tours, consulting, robotCategories] = await Promise.all([
+  const [factories, tours, consulting, robotCategories, cases] = await Promise.all([
     getFactories(),
     getTours(),
     getConsulting(),
     getPublishedCategories("robots"),
+    getCases(),
   ]);
 
   // Только категории, где уже есть заводы — карусель на главной ведёт
@@ -56,6 +58,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       })),
     )
   ).filter((item) => item.factoryCount > 0);
+
+  // Карусель видео-кейсов на главной — только опубликованные записи
+  // с загруженным видео; карточка кликабельна, только если у кейса
+  // есть полноценная страница (тот же приём, что на /cases).
+  const videoCaseItems = cases
+    .filter((c) => c.published && c.video)
+    .sort((a, b) => a.order - b.order)
+    .map((c) => ({
+      id: c.id,
+      title: isEn ? c.title_en : c.title_ru,
+      video: c.video,
+      hasDetail: Boolean(c.fullText_ru),
+    }));
 
   const hero = getHeroMedia();
   // Тёмный вариант хиро включается появлением видео или постера в public/media
@@ -235,6 +250,40 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      {/* Видео-кейсы — полноширинная 3D-карусель, крутится сама */}
+      <section className="[overflow-x:clip] bg-canvas py-16">
+        <div className="mx-auto max-w-(--container-page) px-5 lg:px-10">
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
+            <h2 className="text-heading-lg">{isEn ? "Cases on video" : "Кейсы на видео"}</h2>
+            <Link href="/cases" className="text-body underline underline-offset-4 hover:text-stone">
+              {isEn ? "All cases" : "Смотреть все кейсы"}
+            </Link>
+          </div>
+        </div>
+        <div className="mt-10">
+          {videoCaseItems.length > 0 ? (
+            <VideoCaseCarousel
+              items={videoCaseItems}
+              emptyLabel={isEn ? "Video — in production" : "Видео — в подготовке"}
+              ariaLabel={isEn ? "Case videos" : "Видео с кейсами"}
+            />
+          ) : (
+            <div className="mx-auto max-w-(--container-page) px-5 lg:px-10">
+              <div className="rounded-card border border-fog bg-warm-parchment p-8 text-center">
+                <p className="text-heading-sm">
+                  {isEn ? "Case videos are coming soon" : "Видео с кейсами появятся здесь"}
+                </p>
+                <p className="mt-2 text-body text-stone">
+                  {isEn
+                    ? "We're preparing footage from deliveries and factory trips."
+                    : "Готовим ролики с поставок и поездок на заводы."}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Тёмная полоса — цитата и счётчики */}
       <section className="bg-ink text-canvas">
         <div className="mx-auto max-w-(--container-page) px-5 py-16 lg:px-10">
@@ -270,12 +319,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* Бегущая строка: заводы и города из базы — живая, но документальная */}
       {published.length > 0 && (
-        <div className="border-b border-fog py-3 font-mono text-caption uppercase text-stone">
+        <div className="border-b border-fog bg-warm-parchment py-6 font-mono text-body uppercase text-stone">
           <Ticker
-            items={published.map((f) => {
-              const city = f.city?.split(",")[0]?.trim();
-              return city ? `${f.name} — ${city}` : f.name;
-            })}
+            items={published.map((f) => ({
+              name: f.name,
+              suffix: f.city?.split(",")[0]?.trim(),
+            }))}
           />
         </div>
       )}

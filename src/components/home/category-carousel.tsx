@@ -3,19 +3,13 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { wrappedOffset } from "@/lib/carousel-math";
 
 export type CarouselItem = { id: string; name: string; photo?: string };
 
 const ANGLE_STEP = 30;
 const PX_PER_STEP = 130;
 const MAX_VISIBLE_OFFSET = 2;
-
-/** Кратчайшее знаковое смещение по кругу — нужно, чтобы карусель закольцовывалась. */
-function wrappedOffset(index: number, position: number, count: number): number {
-  let raw = index - position;
-  raw = ((raw % count) + count * 1.5) % count - count / 2;
-  return raw;
-}
 
 /**
  * 3D-карусель категорий на главной: карточки «парят» на перспективе, а не
