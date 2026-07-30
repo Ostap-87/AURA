@@ -53,7 +53,7 @@ export function FaqList({ sections }: { sections: FaqListSection[] }) {
                     className="rounded-card border border-fog bg-warm-parchment p-4"
                   >
                     <summary className="cursor-pointer text-body font-medium">{item.q}</summary>
-                    <p className="mt-3 text-body text-stone">{item.a}</p>
+                    <p className="mt-3 whitespace-pre-line text-body text-stone">{item.a}</p>
                   </details>
                 ))}
               </div>

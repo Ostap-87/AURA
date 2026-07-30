@@ -47,7 +47,9 @@
   "faq": {
     "title": "Questions and answers",
     "searchPlaceholder": "Search questions",
-    "noResults": "Nothing found — ask your question via the contacts page form."
+    "noResults": "Nothing found — ask your question via the contacts page form.",
+    "contactTitle": "Didn't find your question?",
+    "contactText": "Describe your task — what needs automating, the volume, the constraints. We'll answer directly, including cases where a robot won't solve your task."
   },
   "catalog": {
     "hubTitle": "Robot catalog",
