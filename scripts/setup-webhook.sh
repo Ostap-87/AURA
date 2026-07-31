@@ -24,7 +24,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=${APP_DIR}
-ExecStart=/usr/bin/node ${APP_DIR}/scripts/deploy-webhook.js
+ExecStart=/usr/bin/node ${APP_DIR}/scripts/deploy-webhook.cjs
 Restart=always
 RestartSec=5
 Environment=WEBHOOK_SECRET=${SECRET}
