@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { wrappedOffset } from "@/lib/carousel-math";
@@ -10,11 +10,16 @@ export type CarouselItem = { id: string; name: string; photo?: string };
 const ANGLE_STEP = 30;
 const PX_PER_STEP = 130;
 const MAX_VISIBLE_OFFSET = 2;
+const AUTOPLAY_MS = 4000;
+/** Горизонтальный шаг между карточками: меньше на мобильных (карточки уже). */
+const CARD_OFFSET_PX_DESKTOP = 160;
+const CARD_OFFSET_PX_MOBILE = 100;
 
 /**
  * 3D-карусель категорий на главной: карточки «парят» на перспективе, а не
  * едут внутри рамки со скрытым переполнением — контейнер намеренно без
- * overflow-hidden. Перетаскивание мышью/тачем крутит колесо; клик по
+ * overflow-hidden. Крутится сама по таймеру; перетаскивание мышью/тачем
+ * останавливает автопрокрутку на время драга и крутит колесо руками. Клик по
  * карточке ведёт в каталог категории, если это был клик, а не драг.
  */
 export function CategoryCarousel({
@@ -37,6 +42,11 @@ export function CategoryCarousel({
       window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     [],
   );
+  const isDesktop = useMemo(
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches,
+    [],
+  );
+  const cardOffsetPx = isDesktop ? CARD_OFFSET_PX_DESKTOP : CARD_OFFSET_PX_MOBILE;
 
   const count = items.length;
   const position = activeIndex - dragPx / PX_PER_STEP;
@@ -47,6 +57,14 @@ export function CategoryCarousel({
     },
     [count],
   );
+
+  // Автопрокрутка по таймеру; останавливается на время ручного драга и
+  // при prefers-reduced-motion.
+  useEffect(() => {
+    if (count < 2 || prefersReducedMotion || isDragging) return;
+    const id = window.setInterval(() => step(1), AUTOPLAY_MS);
+    return () => window.clearInterval(id);
+  }, [count, prefersReducedMotion, isDragging, step]);
 
   // Слушатели на window, а не setPointerCapture на контейнере: capture
   // переносит последующий click-событие на контейнер и ссылки-карточки
@@ -113,7 +131,7 @@ export function CategoryCarousel({
                 if (movedRef.current) e.preventDefault();
               }}
               style={{
-                transform: `translate(-50%, -50%) translateX(${offset * 100}px) rotateY(${-angle}deg) translateZ(-${absOffset * 70}px) scale(${scale})`,
+                transform: `translate(-50%, -50%) translateX(${offset * cardOffsetPx}px) rotateY(${-angle}deg) translateZ(-${absOffset * 70}px) scale(${scale})`,
                 transition:
                   isDragging || prefersReducedMotion
                     ? "opacity 0.2s"
@@ -121,7 +139,7 @@ export function CategoryCarousel({
                 opacity,
                 zIndex: 100 - Math.round(absOffset * 10),
               }}
-              className="absolute left-1/2 top-1/2 block w-[54%] max-w-[280px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg"
+              className="absolute left-1/2 top-1/2 block w-[54%] max-w-[280px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg lg:w-[450px] lg:max-w-none"
             >
               <div className="media-slot-empty relative aspect-[3/4]" aria-hidden={Boolean(item.photo)}>
                 {item.photo && (
@@ -129,7 +147,7 @@ export function CategoryCarousel({
                     src={item.photo}
                     alt={item.name}
                     fill
-                    sizes="280px"
+                    sizes="(min-width: 1024px) 450px, 280px"
                     className="object-cover"
                   />
                 )}
