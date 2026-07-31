@@ -4,7 +4,8 @@ import { getFactoryById } from "@/lib/catalog";
 import { getProductionFactories } from "@/lib/production";
 import { ProductionFactoryDetail } from "@/components/production/production-factory-detail";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { pageAlternates } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { pageAlternates, productJsonLd } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const factories = await getProductionFactories();
@@ -51,6 +52,17 @@ export default async function ProductionFactoryPage({
       <div className="mt-8">
         <ProductionFactoryDetail factory={factory} locale={locale} />
       </div>
+      {/* Product без цены — у завода несколько категорий оборудования, единой вилки нет */}
+      <JsonLd
+        data={productJsonLd({
+          locale,
+          path: `/production/factory/${factoryId}`,
+          name: factory.name,
+          description:
+            locale === "en" && factory.description_en ? factory.description_en : factory.description_ru,
+          image: factory.photos[0],
+        })}
+      />
     </section>
   );
 }

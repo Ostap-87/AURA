@@ -1,4 +1,9 @@
 {
+  "seo": {
+    "defaultTitle": "Aura Robotics — Robotics and Production Equipment from China",
+    "titleTemplate": "%s — Aura Robotics",
+    "defaultDescription": "Robotics and production equipment from China, delivered direct from the factory: model selection, contract, pre-shipment inspection, logistics, customs, commissioning."
+  },
   "nav": {
     "robots": "Robots",
     "production": "Robotic equipment",

@@ -968,6 +968,114 @@ Sheets → `npm run sync`), а не через Notion — быстрее под�
   строк, поиск по вопросам фильтрует по всем 14 разделам, JSON-LD
   (`faqJsonLd`) собирается по всем вопросам без ошибок.
 
+## SEO-инфраструктура: фавикон, OG-картинка, title-шаблон, соцсети
+
+Владелец попросил «прописать заголовки и компоненты, чтобы SEO
+подтягивалось органически и соцсети правильно читали ru/en». До этого
+на сайте были canonical/hreflang/JSON-LD (заложены на этапе 10), но не
+было favicon/OG-картинки вообще (карточка при шаринге в Telegram/VK/
+WhatsApp была бы пустой), не было общего title-шаблона и 7 страниц не
+имели description (важен и для сниппета в поиске, и как фолбэк для
+og:description/twitter:description).
+
+- **Фавикон и apple-touch-icon** — `src/app/icon.tsx` (32×32) и
+  `src/app/apple-icon.tsx` (180×180), файловая конвенция Next
+  (`next/og` `ImageResponse`), не привязаны к `[locale]` — иконка не
+  зависит от языка. Логотипа-файла нет (см. `Logo`, читает
+  `public/logo.svg` и иначе показывает текст) — тот же принцип здесь:
+  буква «A» на фирменном тёмно-сером фоне (`#262626`), заменится сама,
+  если/когда появится `logo.svg` и на основе него будет пересобран
+  favicon.
+- **OG/Twitter-картинка** — `src/app/[locale]/opengraph-image.tsx`
+  (1200×630, тоже `ImageResponse`), лежит внутри `[locale]`, поэтому
+  генерируется отдельно на ru/en с локализованным текстом. Вордмарк
+  «AURA ROBOTICS» + жёлтая плашка-акцент + тэглайн на языке страницы.
+- **`src/app/manifest.ts`** — веб-манифест (PWA-минимум): имя, цвета,
+  ссылки на `/icon` и `/apple-icon`.
+- **`generateMetadata` в `src/app/[locale]/layout.tsx`** (раньше был
+  статичный `export const metadata`, локаль не учитывал):
+  - `title: { default, template: "%s — Aura Robotics" }` — дочерние
+    страницы, где `title` — простая строка, получают суффикс бесплатно,
+    без правки каждой страницы;
+  - `openGraph`/`twitter` — сайт, тип, og:locale + og:locale:alternate
+    (соцсети должны понимать, какой язык у карточки); `og:title`/
+    `og:description` НЕ переопределяются на уровне layout — по Metadata
+    API Next.js сам берёт их из `title`/`description` дочерней
+    страницы, если та их не переопределяет отдельно, значит уже
+    существующие 24 `generateMetadata` по всему сайту получили верный
+    og:title/og:description без единой правки;
+  - `robots`/`verification` — `verification.google`/`.yandex` берутся
+    из `GOOGLE_SITE_VERIFICATION`/`YANDEX_VERIFICATION` (пусто — тег не
+    рендерится; коды подставит владелец в переменные окружения, когда
+    заведёт сайт в Search Console/Вебмастере — руками в коде ничего
+    менять не придётся);
+  - строки — новый namespace `seo` в `messages/{ru,en}.json`
+    (`defaultTitle`, `titleTemplate`, `defaultDescription`).
+  - добавлен `websiteJsonLd()` (`src/lib/seo.ts`) — сущность WebSite
+    рядом с уже существующим `organizationJsonLd()`.
+- **Два заголовка с брендом внутри строки** (`/`, `/tours`,
+  `/tours/[id]`) уже заканчивались на «Aura Robotics»/«Aura Robotics
+  Tour» — с новым шаблоном получили бы задвоение («...— Aura Robotics
+  Tour — Aura Robotics»). Исправлено через `title: { absolute: "..." }`
+  — так строка идёт в `<title>` как есть, шаблон не применяется.
+- **Найден и исправлен `favicon` 404 из-за миддлвара**: matcher
+  next-intl (`src/middleware.ts`) исключал пути с точкой в них
+  (`.*\\..*`) — это ловит `manifest.webmanifest`/`sitemap.xml`/
+  `robots.txt`, но НЕ `/icon` и `/apple-icon` (в самом пути точки нет,
+  расширение добавляется файловой конвенцией Next отдельно). Без
+  исключения next-intl переписывал путь на локаль и Next не находил
+  роут `[locale]/icon` (такого не существует — иконка вне `[locale]`)
+  → 404. Добавлены явные исключения `icon`/`apple-icon` в matcher.
+  Поймано не по логам, а руками: `curl` на `/icon` после сборки отдавал
+  404, хотя файл был в `.next/server/app/icon`.
+- **OG-картинка ru и один лишний редирект**: Next выводит абсолютный
+  URL og:image из физического пути сегмента — буквально
+  `/ru/opengraph-image`, хотя у ru как локали по умолчанию (as-needed)
+  в реальных адресах префикса нет, и `/ru/...` отдаёт 307 на
+  `/opengraph-image`. Пробовал переопределить `openGraph.images`
+  вручную тем же `localeUrl`, что и canonical, — не сработало: Next
+  подставляет автодетект файловой конвенции поверх любого explicit
+  `images` в том же сегменте, это подтверждено на практике (у итоговой
+  картинки не было даже `alt`, который я передавал только через
+  metadata). Убрал мёртвый код, оставил редирект как есть — проверено
+  вручную (`curl -L`), редирект резолвится в один хоп в валидный PNG
+  1200×630, а Facebook/Telegram/VK/WhatsApp следуют за редиректом при
+  загрузке og:image, так что это не проблема на практике.
+- **Заполнены description на 7 страницах, где его не было**:
+  `/faq`, `/contacts`, `/policy`, `/quiz`,
+  `/production/[industry]`, `/production/equipment/[equipment]`,
+  `/production/[industry]/[equipment]` — на обоих языках.
+- **Product JSON-LD на карточке завода `/production/factory/[id]`** —
+  раньше был только на карточке `/catalog/[category]/factory/[id]`
+  (там есть цена категории). У производственных заводов единой цены
+  нет (несколько категорий оборудования), поэтому `productJsonLd()`
+  вызван без `priceFrom`/`priceTo` — функция это уже поддерживала.
+- **Попутно найден и исправлен ещё один экземпляр старого бага**
+  «справочник в коде вместо категорий из таблицы» (тот же класс, что
+  уже чинили в `sitemap.ts` и `getEquipmentOptions()`): в
+  `src/lib/production.ts` — `getEquipmentOptionsForSubIndustry()` и
+  `getIntersectionParams()` — брали `equipmentTypes` напрямую вместо
+  `getEquipmentOptions()`, из-за чего категории оборудования, заведённые
+  только в Google Sheets (например `centralkitchen`, `smartchef`),
+  никогда не попадали в связанные чипы на странице субиндустрии и в
+  страницы пересечений `/production/[industry]/[equipment]` — не 404,
+  а просто отсутствовали как маршрут. Страница пересечения
+  (`production/[industry]/[equipment]/page.tsx`) заодно переведена на
+  `getEquipmentOption()` вместо `equipmentTypes.find()`. Эффект виден
+  прямо в выводе `next build`: до фикса `/production/meat/[equipment]`
+  генерировал 2 пути, после — 5 (`meat`, `rice`, `thermal`,
+  `vegetables`, `washing`); карта сайта выросла со 156 URL (после
+  фикса) — сравнение до/после не сохранено, но прирост подтверждён по
+  журналу сборки.
+- QA: `tsc --noEmit`, `npm run lint`, `npm run build` — чисто;
+  `next start` + `curl` по ~10 ключевым маршрутам (200 везде),
+  сверены `<title>`, `og:*`, `twitter:*`, canonical/hreflang на
+  главной, `/faq`, `/tours`, `/tours/[id]`, карточке завода; отдельно
+  скачаны и визуально проверены `/icon`, `/apple-icon`,
+  `/opengraph-image` (ru) и `/en/opengraph-image` — все четыре
+  референсы совпадают с фирменным стилем (тёмно-серый фон, белый
+  текст, жёлтый акцент).
+
 ## Что дальше
 
 По плану: кейсы/блог/контент-API (9 — ждёт доступ к Notion от

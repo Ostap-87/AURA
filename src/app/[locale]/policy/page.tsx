@@ -5,6 +5,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   return {
     title: locale === "en" ? "Personal data processing policy" : "Политика обработки персональных данных",
+    description:
+      locale === "en"
+        ? "How Aura Robotics collects, uses and protects personal data submitted through the site."
+        : "Как Aura Robotics собирает, использует и защищает персональные данные, переданные через сайт.",
     alternates: pageAlternates(locale, "/policy"),
   };
 }

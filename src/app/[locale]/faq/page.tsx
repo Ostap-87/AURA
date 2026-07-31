@@ -7,7 +7,14 @@ import { faqSections } from "@/lib/content/faq-content";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "faq" });
-  return { title: t("title"), alternates: pageAlternates(locale, "/faq") };
+  return {
+    title: t("title"),
+    description:
+      locale === "en"
+        ? "Answers about buying robots and production equipment from Chinese factories: pricing, payment, certification, customs, warranty, deployment and payback."
+        : "Ответы о поставке роботов и оборудования для производств с заводов Китая: цены, оплата, сертификация, таможня, гарантия, внедрение и окупаемость.",
+    alternates: pageAlternates(locale, "/faq"),
+  };
 }
 
 export default async function FaqPage({ params }: { params: Promise<{ locale: string }> }) {

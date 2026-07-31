@@ -20,8 +20,13 @@ export async function generateMetadata({
   const { locale, industry } = await params;
   const sub = subIndustries.find((s) => s.id === industry);
   if (!sub) return {};
+  const subName = locale === "en" ? sub.name_en : sub.name_ru;
   return {
-    title: locale === "en" ? sub.name_en : sub.name_ru,
+    title: subName,
+    description:
+      locale === "en"
+        ? `Production equipment for ${subName.toLowerCase()}: vetted Chinese factories, lines and machines matched to your product and volume.`
+        : `Оборудование для отрасли «${subName}»: проверенные заводы Китая, линии и машины под ваш продукт и объём.`,
     alternates: pageAlternates(locale, `/production/${industry}`),
   };
 }

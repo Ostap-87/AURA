@@ -6,7 +6,7 @@ import { computeTourStats, getDaysForTour, getPublishedTours } from "@/lib/tours
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   return {
-    title: "Aura Robotics Tour",
+    title: { absolute: "Aura Robotics Tour" },
     description:
       locale === "en"
         ? "Sourcing trips to China's robotics factories: closed visits, interpreters, technical expertise."

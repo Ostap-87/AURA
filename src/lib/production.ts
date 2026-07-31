@@ -32,10 +32,13 @@ export async function getIntersectionFactories(
 }
 
 export async function getEquipmentOptionsForSubIndustry(subIndustryId: string) {
-  const factories = await getFactoriesBySubIndustry(subIndustryId);
+  const [factories, options] = await Promise.all([
+    getFactoriesBySubIndustry(subIndustryId),
+    getEquipmentOptions(),
+  ]);
   const ids = new Set<string>();
   factories.forEach((f) => f.categories.forEach((c) => ids.add(c)));
-  return equipmentTypes.filter((e) => ids.has(e.id));
+  return options.filter((e) => ids.has(e.id));
 }
 
 export async function getSubIndustryOptionsForEquipment(equipmentId: string) {
@@ -47,9 +50,10 @@ export async function getSubIndustryOptionsForEquipment(equipmentId: string) {
 
 /** Пересечения создаются только там, где реально есть завод на обеих осях (PROJECT.md, раздел 4). */
 export async function getIntersectionParams(): Promise<{ industry: string; equipment: string }[]> {
+  const equipmentOptions = await getEquipmentOptions();
   const params: { industry: string; equipment: string }[] = [];
   for (const sub of subIndustries) {
-    for (const equipment of equipmentTypes) {
+    for (const equipment of equipmentOptions) {
       const matches = await getIntersectionFactories(sub.id, equipment.id);
       if (matches.length > 0) params.push({ industry: sub.id, equipment: equipment.id });
     }

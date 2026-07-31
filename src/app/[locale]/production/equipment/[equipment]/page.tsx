@@ -27,8 +27,13 @@ export async function generateMetadata({
   const { locale, equipment: equipmentId } = await params;
   const equipment = await getEquipmentOption(equipmentId);
   if (!equipment) return {};
+  const equipmentName = locale === "en" ? equipment.name_en : equipment.name_ru;
   return {
-    title: locale === "en" ? equipment.name_en : equipment.name_ru,
+    title: equipmentName,
+    description:
+      locale === "en"
+        ? `${equipmentName} suppliers among vetted Chinese factories: specifications, pricing and lead times.`
+        : `Заводы-поставщики оборудования «${equipmentName}» в Китае: характеристики, цены, сроки поставки.`,
     alternates: pageAlternates(locale, `/production/equipment/${equipmentId}`),
   };
 }

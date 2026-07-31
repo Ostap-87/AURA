@@ -4,8 +4,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { LeadForm } from "@/components/forms/lead-form";
 import { SupplierCard } from "@/components/shared/supplier-card";
-import { getIntersectionFactories, getIntersectionParams } from "@/lib/production";
-import { equipmentTypes, subIndustries } from "@/lib/reference-data";
+import { getEquipmentOption, getIntersectionFactories, getIntersectionParams } from "@/lib/production";
+import { subIndustries } from "@/lib/reference-data";
 
 export async function generateStaticParams() {
   return getIntersectionParams();
@@ -18,12 +18,16 @@ export async function generateMetadata({
 }) {
   const { locale, industry, equipment: equipmentId } = await params;
   const sub = subIndustries.find((s) => s.id === industry);
-  const equipment = equipmentTypes.find((e) => e.id === equipmentId);
+  const equipment = await getEquipmentOption(equipmentId);
   if (!sub || !equipment) return {};
   const subName = locale === "en" ? sub.name_en : sub.name_ru;
   const equipmentName = locale === "en" ? equipment.name_en : equipment.name_ru;
   return {
     title: `${equipmentName} — ${subName}`,
+    description:
+      locale === "en"
+        ? `${equipmentName} for ${subName.toLowerCase()}: vetted Chinese factories, specs and lead times.`
+        : `${equipmentName} для отрасли «${subName}»: проверенные заводы Китая, характеристики и сроки поставки.`,
     alternates: pageAlternates(locale, `/production/${industry}/${equipmentId}`),
   };
 }
@@ -37,7 +41,7 @@ export default async function ProductionIntersectionPage({
   setRequestLocale(locale);
 
   const sub = subIndustries.find((s) => s.id === industry);
-  const equipment = equipmentTypes.find((e) => e.id === equipmentId);
+  const equipment = await getEquipmentOption(equipmentId);
   if (!sub || !equipment) notFound();
 
   const factories = await getIntersectionFactories(sub.id, equipment.id);

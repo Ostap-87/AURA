@@ -27,5 +27,8 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  // icon/apple-icon — файловые метаданные Next.js в корне app/ (без точки в пути,
+  // поэтому общее исключение "путь с точкой" их не ловит) — без явного исключения
+  // next-intl переписывает путь на локаль и роут «/icon» не находится (404).
+  matcher: ["/((?!api|_next|_vercel|icon|apple-icon|.*\\..*).*)"],
 };

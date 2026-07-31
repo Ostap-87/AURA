@@ -6,6 +6,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   return {
     title: locale === "en" ? "Contacts" : "Контакты",
+    description:
+      locale === "en"
+        ? "WhatsApp, Telegram, email and our Shanghai office phone — get in touch with Aura Robotics."
+        : "WhatsApp, Telegram, почта и телефон офиса в Шанхае — свяжитесь с Aura Robotics.",
     alternates: pageAlternates(locale, "/contacts"),
   };
 }

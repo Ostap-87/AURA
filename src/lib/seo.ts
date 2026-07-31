@@ -59,6 +59,17 @@ export function organizationJsonLd() {
   };
 }
 
+/** WebSite-сущность для карточки сайта в поиске (имя, язык, канонический URL). */
+export function websiteJsonLd(locale: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Aura Robotics",
+    url: localeUrl(locale, "/"),
+    inLanguage: locale,
+  };
+}
+
 export function breadcrumbJsonLd(locale: string, items: { label: string; href?: string }[]) {
   return {
     "@context": "https://schema.org",

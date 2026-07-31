@@ -20,10 +20,13 @@ import { getTranslations } from "next-intl/server";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   return {
-    title:
-      locale === "en"
-        ? "Aura Robotics — robotics and equipment from leading Chinese manufacturers"
-        : "Aura Robotics — робототехника и оборудование от ведущих китайских производителей",
+    // absolute — не через layout.title.template, бренд уже в самой строке
+    title: {
+      absolute:
+        locale === "en"
+          ? "Aura Robotics — robotics and equipment from leading Chinese manufacturers"
+          : "Aura Robotics — робототехника и оборудование от ведущих китайских производителей",
+    },
     description:
       locale === "en"
         ? "Robots and robotic equipment from leading Chinese manufacturers. Direct partnerships with factories and the best technology solutions for your business and life."

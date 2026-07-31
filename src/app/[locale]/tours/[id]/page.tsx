@@ -39,7 +39,7 @@ export async function generateMetadata({
   const tour = await getTourById(id);
   if (!tour) return {};
   return {
-    title: `${locale === "en" ? tour.title_en : tour.title_ru} — Aura Robotics Tour`,
+    title: { absolute: `${locale === "en" ? tour.title_en : tour.title_ru} — Aura Robotics Tour` },
     description: locale === "en" ? tour.summary_en : tour.summary_ru,
     alternates: pageAlternates(locale, `/tours/${id}`),
   };

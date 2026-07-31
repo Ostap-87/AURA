@@ -13,7 +13,14 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "quiz" });
-  return { title: t("title"), alternates: pageAlternates(locale, "/quiz") };
+  return {
+    title: t("title"),
+    description:
+      locale === "en"
+        ? "Answer a few questions about your task and get a matching robot category with an estimated payback."
+        : "Ответьте на несколько вопросов о задаче и получите подходящую категорию робота с оценкой окупаемости.",
+    alternates: pageAlternates(locale, "/quiz"),
+  };
 }
 
 export default async function QuizPage({
