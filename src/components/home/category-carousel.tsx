@@ -10,7 +10,8 @@ export type CarouselItem = { id: string; name: string; photo?: string };
 const ANGLE_STEP = 30;
 const PX_PER_STEP = 130;
 const MAX_VISIBLE_OFFSET = 2;
-const AUTOPLAY_MS = 4000;
+/** Сколько мс уходит на непрерывный оборот на одну карточку вперёд. */
+const ROTATION_PERIOD_MS = 6000;
 /** Горизонтальный шаг между карточками: меньше на мобильных (карточки уже). */
 const CARD_OFFSET_PX_DESKTOP = 160;
 const CARD_OFFSET_PX_MOBILE = 100;
@@ -18,9 +19,11 @@ const CARD_OFFSET_PX_MOBILE = 100;
 /**
  * 3D-карусель категорий на главной: карточки «парят» на перспективе, а не
  * едут внутри рамки со скрытым переполнением — контейнер намеренно без
- * overflow-hidden. Крутится сама по таймеру; перетаскивание мышью/тачем
- * останавливает автопрокрутку на время драга и крутит колесо руками. Клик по
- * карточке ведёт в каталог категории, если это был клик, а не драг.
+ * overflow-hidden. Крутится сама непрерывно и плавно (requestAnimationFrame,
+ * без рывков и остановок); перетаскивание мышью/тачем останавливает
+ * автовращение на время драга и крутит колесо руками, а после отпускания
+ * оно продолжается с той же точки. Клик по карточке ведёт в каталог
+ * категории, если это был клик, а не драг.
  */
 export function CategoryCarousel({
   items,
@@ -31,11 +34,13 @@ export function CategoryCarousel({
   emptyLabel: string;
   ariaLabel: string;
 }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [basePosition, setBasePosition] = useState(0);
   const [dragPx, setDragPx] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [discreteJump, setDiscreteJump] = useState(false);
   const startXRef = useRef(0);
   const movedRef = useRef(false);
+  const jumpTimeoutRef = useRef<number | null>(null);
   const prefersReducedMotion = useMemo(
     () =>
       typeof window !== "undefined" &&
@@ -49,22 +54,48 @@ export function CategoryCarousel({
   const cardOffsetPx = isDesktop ? CARD_OFFSET_PX_DESKTOP : CARD_OFFSET_PX_MOBILE;
 
   const count = items.length;
-  const position = activeIndex - dragPx / PX_PER_STEP;
+  const position = basePosition - dragPx / PX_PER_STEP;
+
+  // Короткая метка «это был осознанный прыжок на карточку» (кнопка,
+  // стрелка на клавиатуре, отпускание после драга) — только тогда включаем
+  // CSS-переход на transform. Непрерывное автовращение крутит transform
+  // само по себе каждый кадр, ему лишний transition только мешает плавности.
+  const triggerDiscreteJump = useCallback(() => {
+    setDiscreteJump(true);
+    if (jumpTimeoutRef.current) window.clearTimeout(jumpTimeoutRef.current);
+    jumpTimeoutRef.current = window.setTimeout(() => setDiscreteJump(false), 500);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (jumpTimeoutRef.current) window.clearTimeout(jumpTimeoutRef.current);
+    };
+  }, []);
 
   const step = useCallback(
     (delta: number) => {
-      setActiveIndex((prev) => (((prev + delta) % count) + count) % count);
+      triggerDiscreteJump();
+      setBasePosition((prev) => (((prev + delta) % count) + count) % count);
     },
-    [count],
+    [count, triggerDiscreteJump],
   );
 
-  // Автопрокрутка по таймеру; останавливается на время ручного драга и
-  // при prefers-reduced-motion.
+  // Непрерывное плавное автовращение через requestAnimationFrame — без
+  // остановок между карточками. Останавливается на время ручного драга,
+  // при prefers-reduced-motion и во время короткого дискретного прыжка.
   useEffect(() => {
     if (count < 2 || prefersReducedMotion || isDragging) return;
-    const id = window.setInterval(() => step(1), AUTOPLAY_MS);
-    return () => window.clearInterval(id);
-  }, [count, prefersReducedMotion, isDragging, step]);
+    let frameId: number;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = now - last;
+      last = now;
+      setBasePosition((prev) => (prev + dt / ROTATION_PERIOD_MS) % count);
+      frameId = requestAnimationFrame(tick);
+    };
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [count, prefersReducedMotion, isDragging]);
 
   // Слушатели на window, а не setPointerCapture на контейнере: capture
   // переносит последующий click-событие на контейнер и ссылки-карточки
@@ -132,10 +163,16 @@ export function CategoryCarousel({
               }}
               style={{
                 transform: `translate(-50%, -50%) translateX(${offset * cardOffsetPx}px) rotateY(${-angle}deg) translateZ(-${absOffset * 70}px) scale(${scale})`,
+                // Во время непрерывного автовращения transform обновляется
+                // каждый кадр без перехода — плавность даёт сам rAF, а не
+                // CSS-transition. Переход на transform включаем только для
+                // дискретного прыжка (кнопка/стрелка/отпускание после драга).
                 transition:
                   isDragging || prefersReducedMotion
                     ? "opacity 0.2s"
-                    : "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s",
+                    : discreteJump
+                      ? "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s"
+                      : "opacity 0.3s",
                 opacity,
                 zIndex: 100 - Math.round(absOffset * 10),
               }}
