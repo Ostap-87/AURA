@@ -61,8 +61,8 @@ function loadWidget(): Promise<AuraMascotGlobal> {
  * в другую точку вдоль нижнего края (transform на контейнере,
  * синхронизирован с жестом jump). Плюс привязка жестов к событиям:
  * успешная заявка → wave, клик по кнопке квиза → point.
- * Только десктоп с мышью и без prefers-reduced-motion; на мобильных
- * не рендерится и ничего не грузит.
+ * Живёт и на мобильных (упрощённое качество рендера ради батареи),
+ * и на десктопе; отключается только при prefers-reduced-motion.
  */
 export function RobotMascot() {
   const [enabled, setEnabled] = useState(false);
@@ -73,9 +73,7 @@ export function RobotMascot() {
   const lastHopRef = useRef(0);
 
   useEffect(() => {
-    const mq = window.matchMedia(
-      "(min-width: 1024px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
-    );
+    const mq = window.matchMedia("(prefers-reduced-motion: no-preference)");
     const update = () => setEnabled(mq.matches);
     update();
     mq.addEventListener("change", update);
@@ -98,7 +96,7 @@ export function RobotMascot() {
     host.style.transform = `translateX(${Math.round((ROAM_SLOTS[next] ?? 0) * window.innerWidth)}px)`;
   };
 
-  // Монтирование виджета — один раз на десктопную сессию
+  // Монтирование виджета — один раз за сессию (десктоп и мобильные)
   useEffect(() => {
     if (!enabled) return;
     const host = hostRef.current;
@@ -107,19 +105,22 @@ export function RobotMascot() {
     let cancelled = false;
     const cleanups: (() => void)[] = [];
 
+    const isDesktop = window.matchMedia("(min-width: 1024px) and (pointer: fine)").matches;
+
     loadWidget()
       .then((AuraMascot) => {
         if (cancelled) return;
         mascotRef.current = AuraMascot.mount({
           container: host,
-          size: 220,
+          size: isDesktop ? 220 : 120,
           // Фирменные цвета из design/tokens.md (globals.css @theme)
           palette: { light: 0xf8f6f3, dark: 0x262626, accent: 0xfff65d, glow: 0xfff65d },
-          quality: "high",
+          // На мобильных упрощаем рендер (без теней/отражений) ради батареи
+          quality: isDesktop ? "high" : "low",
           greetOnLoad: true,
           reactToScroll: true,
           autoGestures: true,
-          enableOnMobile: false,
+          enableOnMobile: true,
         });
 
         // Успешная отправка любой формы → помахать
