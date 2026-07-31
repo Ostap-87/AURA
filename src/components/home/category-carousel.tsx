@@ -113,7 +113,7 @@ export function CategoryCarousel({
                 if (movedRef.current) e.preventDefault();
               }}
               style={{
-                transform: `translate(-50%, -50%) translateX(${offset * 78}px) rotateY(${-angle}deg) translateZ(-${absOffset * 70}px) scale(${scale})`,
+                transform: `translate(-50%, -50%) translateX(${offset * 100}px) rotateY(${-angle}deg) translateZ(-${absOffset * 70}px) scale(${scale})`,
                 transition:
                   isDragging || prefersReducedMotion
                     ? "opacity 0.2s"
@@ -121,7 +121,7 @@ export function CategoryCarousel({
                 opacity,
                 zIndex: 100 - Math.round(absOffset * 10),
               }}
-              className="absolute left-1/2 top-1/2 block w-[44%] max-w-[220px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg"
+              className="absolute left-1/2 top-1/2 block w-[54%] max-w-[280px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg"
             >
               <div className="media-slot-empty relative aspect-[3/4]" aria-hidden={Boolean(item.photo)}>
                 {item.photo && (
@@ -129,7 +129,7 @@ export function CategoryCarousel({
                     src={item.photo}
                     alt={item.name}
                     fill
-                    sizes="220px"
+                    sizes="280px"
                     className="object-cover"
                   />
                 )}
