@@ -89,7 +89,11 @@ systemctl enable aura
 systemctl restart aura
 
 echo "=== nginx: реверс-прокси ==="
-cat > /etc/nginx/sites-available/aura <<EOF
+# Файл не трогаем, если он уже есть: после первого запуска certbot дописывает
+# в него SSL-блок, и перезапись этим шаблоном на каждом повторном запуске
+# скрипта стирала бы HTTPS-настройки.
+if [ ! -f /etc/nginx/sites-available/aura ]; then
+  cat > /etc/nginx/sites-available/aura <<EOF
 server {
     listen 80;
     server_name ${DOMAIN_PRIMARY} ${DOMAIN_WWW};
@@ -107,6 +111,9 @@ server {
     }
 }
 EOF
+else
+  echo "nginx-конфиг уже существует, не перезаписываю (там могут быть правки certbot)."
+fi
 
 ln -sf /etc/nginx/sites-available/aura /etc/nginx/sites-enabled/aura
 rm -f /etc/nginx/sites-enabled/default
