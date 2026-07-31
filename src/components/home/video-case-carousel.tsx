@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { wrappedOffset } from "@/lib/carousel-math";
 
@@ -9,14 +9,16 @@ export type VideoCaseItem = { id: string; title: string; video?: string; hasDeta
 const ANGLE_STEP = 22;
 const PX_PER_STEP = 160;
 const MAX_VISIBLE_OFFSET = 2;
-const AUTOPLAY_MS = 4500;
+/** Сколько мс уходит на непрерывный оборот на одну карточку вперёд. */
+const ROTATION_PERIOD_MS = 6000;
 
 /**
  * Полноширинная 3D-карусель видео-кейсов на главной — крутится сама
- * (пауза на драге/наведении/prefers-reduced-motion), радиус растянут
- * на всю секцию, а не на половину колонки, как у CategoryCarousel.
- * Общая математика вынесена в lib/carousel-math, остальное отдельно:
- * тут видео вместо фото и автопрокрутка вместо только ручной.
+ * непрерывно и плавно через requestAnimationFrame, без рывков и остановок
+ * между карточками (пауза на драге/наведении/prefers-reduced-motion),
+ * радиус растянут на всю секцию, а не на половину колонки, как у
+ * CategoryCarousel. Общая математика — в lib/carousel-math, остальное
+ * отдельно: тут видео вместо фото и наведение тоже ставит на паузу.
  */
 export function VideoCaseCarousel({
   items,
@@ -27,12 +29,14 @@ export function VideoCaseCarousel({
   emptyLabel: string;
   ariaLabel: string;
 }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [basePosition, setBasePosition] = useState(0);
   const [dragPx, setDragPx] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [discreteJump, setDiscreteJump] = useState(false);
   const startXRef = useRef(0);
   const movedRef = useRef(false);
+  const jumpTimeoutRef = useRef<number | null>(null);
   const prefersReducedMotion = useMemo(
     () =>
       typeof window !== "undefined" &&
@@ -41,19 +45,47 @@ export function VideoCaseCarousel({
   );
 
   const count = items.length;
-  const position = activeIndex - dragPx / PX_PER_STEP;
+  const position = basePosition - dragPx / PX_PER_STEP;
+
+  // Короткая метка «осознанный прыжок» (кнопка/стрелка/отпускание после
+  // драга) — только тогда включаем CSS-переход на transform. Непрерывное
+  // автовращение крутит transform каждый кадр само, без transition.
+  const triggerDiscreteJump = useCallback(() => {
+    setDiscreteJump(true);
+    if (jumpTimeoutRef.current) window.clearTimeout(jumpTimeoutRef.current);
+    jumpTimeoutRef.current = window.setTimeout(() => setDiscreteJump(false), 500);
+  }, []);
 
   useEffect(() => {
+    return () => {
+      if (jumpTimeoutRef.current) window.clearTimeout(jumpTimeoutRef.current);
+    };
+  }, []);
+
+  // Непрерывное плавное автовращение через requestAnimationFrame — без
+  // остановок между карточками. Пауза на время драга, наведения мыши и
+  // при prefers-reduced-motion.
+  useEffect(() => {
     if (count < 2 || prefersReducedMotion || isDragging || isPaused) return;
-    const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % count);
-    }, AUTOPLAY_MS);
-    return () => clearInterval(timer);
+    let frameId: number;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = now - last;
+      last = now;
+      setBasePosition((prev) => (prev + dt / ROTATION_PERIOD_MS) % count);
+      frameId = requestAnimationFrame(tick);
+    };
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
   }, [count, prefersReducedMotion, isDragging, isPaused]);
 
-  function step(delta: number) {
-    setActiveIndex((prev) => (((prev + delta) % count) + count) % count);
-  }
+  const step = useCallback(
+    (delta: number) => {
+      triggerDiscreteJump();
+      setBasePosition((prev) => (((prev + delta) % count) + count) % count);
+    },
+    [count, triggerDiscreteJump],
+  );
 
   function handlePointerDown(event: React.PointerEvent) {
     if (count < 2) return;
@@ -148,11 +180,16 @@ export function VideoCaseCarousel({
           );
 
           const style: React.CSSProperties = {
-            transform: `translate(-50%, -50%) translateX(${offset * 210}px) rotateY(${-angle}deg) translateZ(-${absOffset * 130}px) scale(${scale})`,
+            transform: `translate(-50%, -50%) translateX(${offset * 420}px) rotateY(${-angle}deg) translateZ(-${absOffset * 260}px) scale(${scale})`,
+            // Непрерывное автовращение крутит transform каждый кадр без
+            // перехода — плавность даёт rAF. Transition на transform — только
+            // для дискретного прыжка (кнопка/стрелка/отпускание после драга).
             transition:
               isDragging || prefersReducedMotion
                 ? "opacity 0.2s"
-                : "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s",
+                : discreteJump
+                  ? "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s"
+                  : "opacity 0.3s",
             opacity,
             zIndex: 100 - Math.round(absOffset * 10),
           };
@@ -167,7 +204,7 @@ export function VideoCaseCarousel({
                 if (movedRef.current) e.preventDefault();
               }}
               style={style}
-              className="absolute left-1/2 top-1/2 block w-[60%] max-w-[420px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg"
+              className="absolute left-1/2 top-1/2 block w-[60%] max-w-[840px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg"
             >
               {card}
             </Link>
@@ -175,7 +212,7 @@ export function VideoCaseCarousel({
             <div
               key={item.id}
               style={style}
-              className="absolute left-1/2 top-1/2 block w-[60%] max-w-[420px] overflow-hidden rounded-card border border-fog bg-warm-parchment shadow-lg"
+              className="absolute left-1/2 top-1/2 block w-[60%] max-w-[840px] overflow-hidden rounded-card border border-fog bg-warm-parchment shadow-lg"
             >
               {card}
             </div>
