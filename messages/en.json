@@ -11,7 +11,10 @@
     "consulting": "Consulting",
     "menu": "Menu",
     "close": "Close",
-    "requestQuote": "Request a quote"
+    "requestQuote": "Request a quote",
+    "search": "Search",
+    "searchPlaceholder": "Search factories and site sections",
+    "searchNoResults": "Nothing found"
   },
   "footer": {
     "legalNameZh": "上海拼那克了科技有限责任公司",

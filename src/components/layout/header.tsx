@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import type { Category } from "@/lib/schemas";
+import { SiteSearch } from "./site-search";
 
 type NavKey = "robots" | "production" | "tours" | "consulting";
 
@@ -100,29 +101,33 @@ export function Header({
           {logo}
         </Link>
 
-        <nav className="hidden items-center gap-1 tablet-lg:flex">
-          {items.map((item) => (
-            <NavDropdown
-              key={item.key}
-              item={item}
-              label={t(item.key)}
-              isOpen={openKey === item.key}
-              onOpen={() => setOpenKey(item.key)}
-              onClose={() => setOpenKey((k) => (k === item.key ? null : k))}
-            />
-          ))}
-          <LocaleSwitch pathname={pathname} />
-        </nav>
+        <div className="flex items-center gap-1">
+          <nav className="hidden items-center gap-1 tablet-lg:flex">
+            {items.map((item) => (
+              <NavDropdown
+                key={item.key}
+                item={item}
+                label={t(item.key)}
+                isOpen={openKey === item.key}
+                onOpen={() => setOpenKey(item.key)}
+                onClose={() => setOpenKey((k) => (k === item.key ? null : k))}
+              />
+            ))}
+            <LocaleSwitch pathname={pathname} />
+          </nav>
 
-        <button
-          type="button"
-          className="flex h-11 w-11 items-center justify-center tablet-lg:hidden"
-          aria-expanded={mobileOpen}
-          aria-label={mobileOpen ? t("close") : t("menu")}
-          onClick={() => setMobileOpen((v) => !v)}
-        >
-          <BurgerIcon open={mobileOpen} />
-        </button>
+          <SiteSearch />
+
+          <button
+            type="button"
+            className="flex h-11 w-11 items-center justify-center tablet-lg:hidden"
+            aria-expanded={mobileOpen}
+            aria-label={mobileOpen ? t("close") : t("menu")}
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            <BurgerIcon open={mobileOpen} />
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (

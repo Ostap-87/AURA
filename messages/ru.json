@@ -11,7 +11,10 @@
     "consulting": "Консалтинг",
     "menu": "Меню",
     "close": "Закрыть",
-    "requestQuote": "Оставить заявку"
+    "requestQuote": "Оставить заявку",
+    "search": "Поиск",
+    "searchPlaceholder": "Поиск заводов и разделов сайта",
+    "searchNoResults": "Ничего не найдено"
   },
   "footer": {
     "legalNameZh": "上海拼那克了科技有限责任公司",
