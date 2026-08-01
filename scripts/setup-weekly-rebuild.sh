@@ -9,13 +9,16 @@ CRON_LINE="0 3 * * 1 /usr/bin/bash /opt/aura/scripts/deploy.sh >> /var/log/aura-
 if crontab -l 2>/dev/null | grep -qF "/opt/aura/scripts/deploy.sh"; then
   echo "Задача в cron для deploy.sh уже есть, пропускаю."
 else
-  (crontab -l 2>/dev/null; echo "$CRON_LINE") | crontab -
+  # crontab -l завершается с ошибкой, если крон пуст — это ожидаемо (первый
+  # запуск), поэтому "|| true", иначе set -e обрывает подстановку раньше,
+  # чем допишется CRON_LINE, и в crontab ничего не попадает.
+  (crontab -l 2>/dev/null || true; echo "$CRON_LINE") | crontab -
   echo "Добавлена задача cron: пересборка каждый понедельник в 03:00 (время сервера)."
 fi
 
 echo ""
 echo "=== ГОТОВО ==="
 echo "Текущий crontab:"
-crontab -l
+crontab -l || true
 echo ""
 echo "Логи пересборки: tail -f /var/log/aura-deploy.log"
