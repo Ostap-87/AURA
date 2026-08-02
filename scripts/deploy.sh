@@ -19,4 +19,7 @@ npm run build
 echo "=== restart aura ==="
 systemctl restart aura
 
+echo "=== publish pending content ==="
+python3 "$APP_DIR/scripts/publish-pending.py" || true
+
 echo "Деплой завершён: $(date -Iseconds)"
