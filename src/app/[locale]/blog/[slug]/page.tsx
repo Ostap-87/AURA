@@ -88,7 +88,19 @@ export default async function BlogPostPage({
         className="mt-8"
       />
 
-      <p className="mt-8 whitespace-pre-line text-body text-stone">{body}</p>
+      <div className="mt-8 space-y-4">
+        {body.split("\n\n").map((block, i) =>
+          block.startsWith("## ") ? (
+            <h2 key={i} className="mt-8 text-heading-sm text-ink first:mt-0">
+              {block.slice(3)}
+            </h2>
+          ) : (
+            <p key={i} className="whitespace-pre-line text-body text-ink">
+              {block}
+            </p>
+          ),
+        )}
+      </div>
 
       <div className="mt-12">
         <Link href="/blog" className="text-body-sm underline underline-offset-4 hover:text-stone">
