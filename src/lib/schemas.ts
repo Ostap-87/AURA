@@ -359,3 +359,28 @@ export const consultingRowSchema = csvRowSchema(consultingSchema, (row) => ({
   photo: row.photo || undefined,
   published: csvBoolean(row.published ?? ""),
 }));
+
+/**
+ * Блог — MVP-конвенция перед плановой интеграцией с Notion (PROJECT.md,
+ * Этап 9). Один JSON-файл на статью в content/blog/*.json, имя файла —
+ * slug. scripts/sync-data.ts собирает их в data/blog.json тем же приёмом
+ * валидации, что и CSV-таблицы (битый файл логируется и пропускается).
+ */
+export const blogPostSchema = z.object({
+  slug: z.string().min(1),
+  title_ru: z.string().min(1),
+  title_en: z.string().min(1),
+  excerpt_ru: z.string().min(1),
+  excerpt_en: z.string().min(1),
+  body_ru: z.string().min(1),
+  body_en: z.string().min(1),
+  cover: z.string().optional(),
+  coverCaption_ru: z.string().optional(),
+  coverCaption_en: z.string().optional(),
+  tags: z.array(z.string()).default([]),
+  author: z.string().min(1),
+  publishedAt: z.string().min(1),
+  updatedAt: z.string().optional(),
+  published: z.boolean(),
+});
+export type BlogPost = z.infer<typeof blogPostSchema>;

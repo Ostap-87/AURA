@@ -9,6 +9,7 @@
     "production": "Robotic equipment",
     "tours": "Aura Robotics Tour",
     "consulting": "Consulting",
+    "blog": "Blog",
     "menu": "Menu",
     "close": "Close",
     "requestQuote": "Request a quote",
@@ -39,7 +40,8 @@
     "navPartners": "Partners and R&D",
     "navContacts": "Contacts",
     "navPolicy": "Data processing policy",
-    "navCases": "Cases and reviews"
+    "navCases": "Cases and reviews",
+    "navBlog": "Blog"
   },
   "logo": {
     "alt": "Aura Robotics"
@@ -50,7 +52,8 @@
     "production": "Production equipment",
     "industries": "Industries",
     "services": "Services",
-    "cases": "Cases and reviews"
+    "cases": "Cases and reviews",
+    "blog": "Blog"
   },
   "faq": {
     "title": "Questions and answers",
@@ -166,5 +169,15 @@
     "backToCases": "Back to cases",
     "clientLabel": "Client",
     "dateLabel": "Date"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Deep dives into factories, robots and equipment from China — from a team that visits the plants and runs the deliveries.",
+    "emptyTitle": "Articles are being prepared",
+    "emptyText": "Factory, robot and equipment deep dives will appear here once they're ready.",
+    "backToBlog": "Back to all articles",
+    "authorLabel": "Author",
+    "dateLabel": "Date",
+    "tagsLabel": "Tags"
   }
 }

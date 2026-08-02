@@ -19,6 +19,7 @@ next-env.d.ts
 /data/consulting.json
 /data/cases.json
 /data/models.json
+/data/blog.json
 
 # env
 .env*.local

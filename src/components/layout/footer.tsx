@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { key: "navQuiz", href: "/quiz" },
   { key: "navFaq", href: "/faq" },
   { key: "navCases", href: "/cases" },
+  { key: "navBlog", href: "/blog" },
   { key: "navAbout", href: "/about" },
   { key: "navPartners", href: "/partners" },
   { key: "navContacts", href: "/contacts" },

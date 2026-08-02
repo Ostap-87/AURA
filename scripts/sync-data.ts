@@ -5,11 +5,12 @@
  *
  * Битая строка не роняет сборку: она логируется и пропускается (PROJECT.md, раздел 3).
  */
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { parseCsv } from "../src/lib/csv";
 import {
+  blogPostSchema,
   caseRowSchema,
   categoryRowSchema,
   consultingRowSchema,
@@ -24,6 +25,7 @@ import {
 const ROOT = path.resolve(import.meta.dirname, "..");
 const SOURCE_DIR = path.join(ROOT, "data", "source");
 const OUTPUT_DIR = path.join(ROOT, "data");
+const BLOG_DIR = path.join(ROOT, "content", "blog");
 
 type Sheet = {
   name: string;
@@ -85,11 +87,59 @@ async function syncSheet(sheet: Sheet): Promise<void> {
   console.log(`[sync-data] ${sheet.name}: ${validRows.length} valid, ${skipped} skipped`);
 }
 
+/**
+ * Блог не тянется из Google Sheets — статьи пишутся файлами в content/blog/
+ * (одна статья = один JSON, имя файла = slug), это удобнее для ежедневной
+ * автоматизации, чем строка CSV с длинным телом статьи. Сборка тем же
+ * приёмом валидирует и логирует битые файлы, не падая.
+ */
+async function syncBlog(): Promise<void> {
+  let files: string[];
+  try {
+    files = (await readdir(BLOG_DIR)).filter((f) => f.endsWith(".json"));
+  } catch {
+    files = [];
+  }
+
+  const validPosts: unknown[] = [];
+  let skipped = 0;
+
+  for (const file of files) {
+    const slug = file.replace(/\.json$/, "");
+    let raw: unknown;
+    try {
+      raw = JSON.parse(await readFile(path.join(BLOG_DIR, file), "utf-8"));
+    } catch (error) {
+      skipped++;
+      console.warn(`[sync-data] blog ${file} skipped — invalid JSON (${(error as Error).message})`);
+      continue;
+    }
+
+    const result = blogPostSchema.safeParse({ slug, ...(raw as object) });
+    if (result.success) {
+      validPosts.push(result.data);
+    } else {
+      skipped++;
+      const issues = result.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; ");
+      console.warn(`[sync-data] blog ${file} skipped — ${issues}`);
+    }
+  }
+
+  validPosts.sort((a, b) => {
+    const post = (p: unknown) => p as { publishedAt: string };
+    return post(b).publishedAt.localeCompare(post(a).publishedAt);
+  });
+
+  await writeFile(path.join(OUTPUT_DIR, "blog.json"), JSON.stringify(validPosts, null, 2) + "\n", "utf-8");
+  console.log(`[sync-data] blog: ${validPosts.length} valid, ${skipped} skipped`);
+}
+
 async function main() {
   await mkdir(OUTPUT_DIR, { recursive: true });
   for (const sheet of sheets) {
     await syncSheet(sheet);
   }
+  await syncBlog();
 }
 
 main().catch((error) => {

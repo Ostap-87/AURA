@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getCases, getCategories, getConsulting, getFactories } from "@/lib/data";
+import { getBlogPosts, getCases, getCategories, getConsulting, getFactories } from "@/lib/data";
 import { getPublishedTours } from "@/lib/tours";
 import { getEquipmentOptions, getIntersectionParams, getProductionFactories } from "@/lib/production";
 import { industriesContent } from "@/lib/content/industries-content";
@@ -8,17 +8,18 @@ import { subIndustries } from "@/lib/reference-data";
 import { localeUrl } from "@/lib/seo";
 
 /** Обе локали через hreflang-альтернативы (PROJECT.md, раздел 12). */
-function entry(path: string): MetadataRoute.Sitemap[number] {
+function entry(path: string, lastModified?: string): MetadataRoute.Sitemap[number] {
   return {
     url: localeUrl("ru", path),
     alternates: {
       languages: { ru: localeUrl("ru", path), en: localeUrl("en", path) },
     },
+    ...(lastModified ? { lastModified } : {}),
   };
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [categories, factories, consulting, cases, tours, intersections, productionFactories] =
+  const [categories, factories, consulting, cases, tours, intersections, productionFactories, blogPosts] =
     await Promise.all([
       getCategories(),
       getFactories(),
@@ -27,6 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       getPublishedTours(),
       getIntersectionParams(),
       getProductionFactories(),
+      getBlogPosts(),
     ]);
 
   const paths: string[] = [
@@ -44,6 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/faq",
     "/contacts",
     "/policy",
+    "/blog",
   ];
 
   // Справочники в коде — страницы существуют всегда
@@ -91,5 +94,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (item.published && item.fullText_ru) paths.push(`/cases/${item.id}`);
   }
 
-  return paths.map(entry);
+  const staticEntries = paths.map((path) => entry(path));
+  const blogEntries = blogPosts
+    .filter((post) => post.published)
+    .map((post) => entry(`/blog/${post.slug}`, post.updatedAt ?? post.publishedAt));
+
+  return [...staticEntries, ...blogEntries];
 }

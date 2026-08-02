@@ -62,6 +62,13 @@ const STATIC_PAGES: {
     description_en: "Delivery and sourcing trip stories with photos and results.",
   },
   {
+    path: "/blog",
+    title_ru: "Блог",
+    title_en: "Blog",
+    description_ru: "Разборы производств, роботов и оборудования из Китая.",
+    description_en: "Deep dives into factories, robots and equipment from China.",
+  },
+  {
     path: "/delivery",
     title_ru: "Как проходит поставка",
     title_en: "How delivery works",

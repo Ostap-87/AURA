@@ -127,6 +127,32 @@ export function productJsonLd(input: {
   };
 }
 
+export function blogPostingJsonLd(input: {
+  locale: string;
+  path: string;
+  title: string;
+  description: string;
+  author: string;
+  datePublished: string;
+  dateModified?: string;
+  image?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: input.title,
+    description: input.description,
+    url: localeUrl(input.locale, input.path),
+    inLanguage: input.locale,
+    datePublished: input.datePublished,
+    dateModified: input.dateModified ?? input.datePublished,
+    author: { "@type": "Organization", name: input.author },
+    publisher: { "@type": "Organization", name: "Aura Robotics", logo: { "@type": "ImageObject", url: `${siteUrl}/logo.svg` } },
+    ...(input.image ? { image: input.image } : {}),
+    mainEntityOfPage: { "@type": "WebPage", "@id": localeUrl(input.locale, input.path) },
+  };
+}
+
 export function eventJsonLd(input: {
   locale: string;
   path: string;
