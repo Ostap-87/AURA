@@ -1,7 +1,7 @@
 id,name_ru,name_en,segment,priceMin,priceMax,leadTime,description_ru,description_en,photo
 humanoid,Гуманоиды,Humanoid robots,robots,,,4-7 недель,,,/media/categories/humanoid.png
 quadruped,Робособаки,Quadruped robots,robots,,,4-7 недель,,,/media/categories/quadruped.png
-agv,AGV и складские роботы,AGV and warehouse robots,robots,,,4-7 недель,,,
+agv,AGV и складские роботы,AGV and warehouse robots,robots,,,4-7 недель,,,/media/categories/agv.png
 cobots,Коллаборативные роботы,Collaborative robots,robots,,,4-7 недель,,,
 industrial,Промышленные роботы,Industrial robots,robots,,,4-7 недель,,,
 welding,Сварочные роботы,Welding robots,robots,,,4-7 недель,,,
