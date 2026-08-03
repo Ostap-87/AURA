@@ -41,6 +41,12 @@ export function CategoryCarousel({
   const startXRef = useRef(0);
   const movedRef = useRef(false);
   const jumpTimeoutRef = useRef<number | null>(null);
+  // Синхронный флаг, в отличие от isDragging (React state — обновляется
+  // с задержкой в кадр). rAF-тик читает именно его, чтобы вращение
+  // останавливалось точно в момент касания, а не через кадр — на мобильных
+  // из-за этой задержки палец касался ещё двигающейся карточки, и браузер
+  // не считал это кликом (карточка "нестабильна" на момент touchend).
+  const interactingRef = useRef(false);
   const prefersReducedMotion = useMemo(
     () =>
       typeof window !== "undefined" &&
@@ -81,21 +87,25 @@ export function CategoryCarousel({
   );
 
   // Непрерывное плавное автовращение через requestAnimationFrame — без
-  // остановок между карточками. Останавливается на время ручного драга,
-  // при prefers-reduced-motion и во время короткого дискретного прыжка.
+  // остановок между карточками. Сам rAF-луп не пересоздаётся на каждое
+  // касание (это и давало задержку в кадр) — тик просто пропускает
+  // обновление позиции, пока interactingRef.current истинен, и эта
+  // проверка синхронна с реальным событием касания.
   useEffect(() => {
-    if (count < 2 || prefersReducedMotion || isDragging) return;
+    if (count < 2 || prefersReducedMotion) return;
     let frameId: number;
     let last = performance.now();
     const tick = (now: number) => {
       const dt = now - last;
       last = now;
-      setBasePosition((prev) => (prev + dt / ROTATION_PERIOD_MS) % count);
+      if (!interactingRef.current) {
+        setBasePosition((prev) => (prev + dt / ROTATION_PERIOD_MS) % count);
+      }
       frameId = requestAnimationFrame(tick);
     };
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
-  }, [count, prefersReducedMotion, isDragging]);
+  }, [count, prefersReducedMotion]);
 
   // Слушатели на window, а не setPointerCapture на контейнере: capture
   // переносит последующий click-событие на контейнер и ссылки-карточки
@@ -105,6 +115,7 @@ export function CategoryCarousel({
     if (event.button !== undefined && event.button !== 0) return;
     startXRef.current = event.clientX;
     movedRef.current = false;
+    interactingRef.current = true;
     setIsDragging(true);
     setDragPx(0);
 
@@ -117,6 +128,7 @@ export function CategoryCarousel({
       const delta = upEvent.clientX - startXRef.current;
       const steps = Math.round(delta / PX_PER_STEP);
       if (steps !== 0) step(-steps);
+      interactingRef.current = false;
       setIsDragging(false);
       setDragPx(0);
       window.removeEventListener("pointermove", handleMove);
@@ -142,7 +154,16 @@ export function CategoryCarousel({
       className="relative select-none [perspective:1200px] aspect-[4/3] w-full touch-pan-y"
       onPointerDown={handlePointerDown}
     >
-      <div className="absolute inset-0 [transform-style:preserve-3d]">
+      {/*
+        pointer-events-none здесь обязателен: у этого враппера своего
+        transform нет, поэтому в 3D-сцене (preserve-3d) он лежит в
+        плоскости z=0 и физически ближе к зрителю, чем любая карточка со
+        translateZ < 0 (все, кроме идеально центральной). Без этого
+        касание на мобильных попадало в сам враппер, а не в карточку —
+        ссылка не открывалась. pointer-events-auto на карточках ниже
+        возвращает им кликабельность.
+      */}
+      <div className="absolute inset-0 [transform-style:preserve-3d] pointer-events-none">
         {items.map((item, index) => {
           const offset = count > 1 ? wrappedOffset(index, position, count) : 0;
           const absOffset = Math.abs(offset);
@@ -176,7 +197,7 @@ export function CategoryCarousel({
                 opacity,
                 zIndex: 100 - Math.round(absOffset * 10),
               }}
-              className="absolute left-1/2 top-1/2 block w-[54%] max-w-[280px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg lg:w-[450px] lg:max-w-none"
+              className="pointer-events-auto absolute left-1/2 top-1/2 block w-[54%] max-w-[280px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg lg:w-[450px] lg:max-w-none"
             >
               <div className="media-slot-empty relative aspect-[3/4]" aria-hidden={Boolean(item.photo)}>
                 {item.photo && (
