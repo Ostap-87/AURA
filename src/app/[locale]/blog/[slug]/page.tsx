@@ -5,6 +5,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { MediaSlot } from "@/components/media/media-slot";
+import { RichBody } from "@/components/blog/rich-body";
 import { getBlogPosts } from "@/lib/data";
 
 export async function generateStaticParams() {
@@ -88,22 +89,7 @@ export default async function BlogPostPage({
         className="mt-8"
       />
 
-      <div className="mt-8 space-y-4">
-        {body.split("\n\n").map((block, i) =>
-          block.startsWith("## ") ? (
-            <h2
-              key={i}
-              className="mt-10 border-l-4 border-accent pl-4 text-heading-sm font-semibold text-ink first:mt-0"
-            >
-              {block.slice(3)}
-            </h2>
-          ) : (
-            <p key={i} className="whitespace-pre-line text-body text-ink">
-              {block}
-            </p>
-          ),
-        )}
-      </div>
+      <RichBody body={body} />
 
       <div className="mt-12">
         <Link href="/blog" className="text-body-sm underline underline-offset-4 hover:text-stone">
