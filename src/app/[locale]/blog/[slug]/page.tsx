@@ -91,7 +91,10 @@ export default async function BlogPostPage({
       <div className="mt-8 space-y-4">
         {body.split("\n\n").map((block, i) =>
           block.startsWith("## ") ? (
-            <h2 key={i} className="mt-8 text-heading-sm text-ink first:mt-0">
+            <h2
+              key={i}
+              className="mt-10 border-l-4 border-accent pl-4 text-heading-sm font-semibold text-ink first:mt-0"
+            >
               {block.slice(3)}
             </h2>
           ) : (
