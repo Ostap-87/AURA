@@ -1,7 +1,13 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
+
+const monogram = readFileSync(path.join(process.cwd(), "public", "ar-monogram.png")).toString(
+  "base64",
+);
 
 export default function AppleIcon() {
   return new ImageResponse(
@@ -16,16 +22,13 @@ export default function AppleIcon() {
           background: "#262626",
         }}
       >
-        <span
-          style={{
-            fontSize: 96,
-            fontWeight: 700,
-            color: "#ffffff",
-            fontFamily: "sans-serif",
-          }}
-        >
-          A
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse требует <img>, не next/image */}
+        <img
+          src={`data:image/png;base64,${monogram}`}
+          width={120}
+          height={71}
+          alt=""
+        />
       </div>
     ),
     { ...size },

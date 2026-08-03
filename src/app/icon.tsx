@@ -1,9 +1,15 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-/** Фавикон: буква A на фирменном тёмном фоне (PROJECT.md, раздел 12 — SEO/соцсети). Нет файла логотипа — держим то же решение, что и текстовый фолбэк Logo. */
+const monogram = readFileSync(path.join(process.cwd(), "public", "ar-monogram.png")).toString(
+  "base64",
+);
+
+/** Фавикон: AR-монограмма из логотипа (public/logo.svg) на фирменном тёмном фоне (PROJECT.md, раздел 12 — SEO/соцсети). */
 export default function Icon() {
   return new ImageResponse(
     (
@@ -18,16 +24,13 @@ export default function Icon() {
           borderRadius: 6,
         }}
       >
-        <span
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: "#ffffff",
-            fontFamily: "sans-serif",
-          }}
-        >
-          A
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse требует <img>, не next/image */}
+        <img
+          src={`data:image/png;base64,${monogram}`}
+          width={22}
+          height={13}
+          alt=""
+        />
       </div>
     ),
     { ...size },
