@@ -21,6 +21,7 @@
   "use strict";
 
   var THREE_CDN = [
+    "/js/vendor/three-r128.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js",
     "https://unpkg.com/three@0.128.0/build/three.min.js",
     "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"
@@ -42,6 +43,7 @@
   };
 
   /* ---------- загрузка three.js ---------- */
+  var THREE_LOAD_TIMEOUT_MS = 4000; // не ждём зависший источник вечно — переходим к следующему
   var threePromise = null;
   function loadThree() {
     if (window.THREE) return Promise.resolve(window.THREE);
@@ -51,10 +53,27 @@
       (function next() {
         if (i >= THREE_CDN.length) return reject(new Error("three.js не загрузился ни с одного зеркала"));
         var s = document.createElement("script");
+        var settled = false;
+        var timer = setTimeout(function () {
+          if (settled) return;
+          settled = true;
+          s.onload = s.onerror = null;
+          next();
+        }, THREE_LOAD_TIMEOUT_MS);
         s.src = THREE_CDN[i++];
         s.async = true;
-        s.onload = function () { window.THREE ? resolve(window.THREE) : next(); };
-        s.onerror = next;
+        s.onload = function () {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          window.THREE ? resolve(window.THREE) : next();
+        };
+        s.onerror = function () {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          next();
+        };
         document.head.appendChild(s);
       })();
     });
