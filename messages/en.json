@@ -4,6 +4,14 @@
     "titleTemplate": "%s — Aura Robotics",
     "defaultDescription": "Robotics and production equipment from China, delivered direct from the factory: model selection, contract, pre-shipment inspection, logistics, customs, commissioning."
   },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This page doesn't exist — the link may be outdated or mistyped. Here's where to go instead:",
+    "home": "Go home",
+    "catalog": "Robot catalog",
+    "blog": "Blog",
+    "contacts": "Get in touch"
+  },
   "nav": {
     "robots": "Robots",
     "production": "Robotic equipment",

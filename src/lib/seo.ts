@@ -33,7 +33,7 @@ export function organizationJsonLd() {
     name: "Aura Robotics",
     legalName: "Shanghai Pinnacle Technology Co., Ltd.",
     url: siteUrl,
-    logo: `${siteUrl}/logo.svg`,
+    logo: `${siteUrl}/logo.png`,
     email: "inquairy@aura-robotics.ru",
     address: {
       "@type": "PostalAddress",
@@ -147,7 +147,7 @@ export function blogPostingJsonLd(input: {
     datePublished: input.datePublished,
     dateModified: input.dateModified ?? input.datePublished,
     author: { "@type": "Organization", name: input.author },
-    publisher: { "@type": "Organization", name: "Aura Robotics", logo: { "@type": "ImageObject", url: `${siteUrl}/logo.svg` } },
+    publisher: { "@type": "Organization", name: "Aura Robotics", logo: { "@type": "ImageObject", url: `${siteUrl}/logo.png` } },
     ...(input.image ? { image: input.image } : {}),
     mainEntityOfPage: { "@type": "WebPage", "@id": localeUrl(input.locale, input.path) },
   };
