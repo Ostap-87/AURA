@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
-# Добавляет проксирование /api/deploy-webhook в конфиг nginx поверх того,
-# что уже настроил certbot (SSL-блок и редиректы 80->443). Запускать один
-# раз, ПОСЛЕ успешного certbot --nginx -d aura-robotics.ru -d www.aura-robotics.ru.
-# Содержимое ниже — точная копия текущего /etc/nginx/sites-available/aura
-# (полученная через cat) с добавленным location для вебхука.
+# Настраивает nginx для aura-robotics.ru: проксирование сайта и вебхука
+# деплоя, плюс редирект www -> apex-домен на HTTP и HTTPS (canonical-домен
+# сайта — aura-robotics.ru без www, см. NEXT_PUBLIC_SITE_URL). Использует
+# уже выпущенный certbot-ом сертификат на оба хоста. Безопасно запускать
+# повторно — просто перезаписывает файл этим же содержимым.
 set -e
 
 cat > /etc/nginx/sites-available/aura <<'EOF'
 server {
-    server_name aura-robotics.ru www.aura-robotics.ru;
+    listen 443 ssl;
+    server_name aura-robotics.ru;
+
+    ssl_certificate /etc/letsencrypt/live/aura-robotics.ru/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/aura-robotics.ru/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     location / {
         proxy_pass http://127.0.0.1:3000;
@@ -26,30 +32,24 @@ server {
         proxy_pass http://127.0.0.1:9001;
         proxy_set_header Host $host;
     }
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/aura-robotics.ru/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/aura-robotics.ru/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
 }
+
 server {
-    if ($host = www.aura-robotics.ru) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
+    listen 443 ssl;
+    server_name www.aura-robotics.ru;
 
+    ssl_certificate /etc/letsencrypt/live/aura-robotics.ru/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/aura-robotics.ru/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
-    if ($host = aura-robotics.ru) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
+    return 301 https://aura-robotics.ru$request_uri;
+}
 
-
+server {
     listen 80;
     server_name aura-robotics.ru www.aura-robotics.ru;
-    return 404; # managed by Certbot
-
-
+    return 301 https://aura-robotics.ru$request_uri;
 }
 EOF
 
@@ -58,4 +58,5 @@ systemctl reload nginx
 
 echo ""
 echo "=== ГОТОВО ==="
-echo "Проверка: curl -I https://aura-robotics.ru/api/deploy-webhook"
+echo "Проверка вебхука:   curl -I https://aura-robotics.ru/api/deploy-webhook"
+echo "Проверка редиректа: curl -I http://www.aura-robotics.ru"
