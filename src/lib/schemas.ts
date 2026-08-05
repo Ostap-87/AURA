@@ -25,7 +25,7 @@ function csvRowSchema<Schema extends z.ZodTypeAny>(
   });
 }
 
-const segmentEnum = z.enum(["robots", "production"]);
+const segmentEnum = z.enum(["robots", "production", "automation"]);
 
 export const factorySchema = z.object({
   id: z.string().min(1),

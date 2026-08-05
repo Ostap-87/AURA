@@ -29,6 +29,7 @@ const labels: Record<string, { ru: string; en: string }> = {
   energy: { ru: "Энергетика", en: "Energy" },
   security: { ru: "Охрана", en: "Security" },
   construction: { ru: "Строительство", en: "Construction" },
+  meat: { ru: "Мясопереработка и птица", en: "Meat and poultry processing" },
   metro: { ru: "Метрополитен", en: "Metro" },
   research: { ru: "Исследования", en: "Research" },
   events: { ru: "Мероприятия", en: "Events" },

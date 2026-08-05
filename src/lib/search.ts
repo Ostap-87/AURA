@@ -1,5 +1,6 @@
 import { getCategories, getFactories } from "./data";
 import { getEquipmentOptions, getProductionFactories } from "./production";
+import { getAutomationFactories } from "./automation";
 import { industriesContent } from "./content/industries-content";
 import { servicesContent } from "./content/services-content";
 import { industries as industryRef, services as serviceRef } from "./reference-data";
@@ -32,6 +33,13 @@ const STATIC_PAGES: {
     title_en: "Robotic equipment for production",
     description_ru: "Роботизированные линии, кухни и оборудование для пищевых и смежных производств.",
     description_en: "Robotic lines, kitchens and equipment for food and related production.",
+  },
+  {
+    path: "/automation",
+    title_ru: "Автоматическое оборудование",
+    title_en: "Automated equipment",
+    description_ru: "Конвейерные весы, сортировщики и линии без роботизированного манипулятора — отдельно от каталога роботов.",
+    description_en: "Conveyor scales, sorters and lines without a robotic manipulator — kept separate from the robot catalog.",
   },
   {
     path: "/quiz",
@@ -123,24 +131,28 @@ function pickText(locale: string, ru: string, en: string): string {
  * попадает сюда сразу при следующей сборке — без отдельного шага индексации.
  */
 export async function buildSearchIndex(locale: string): Promise<SearchEntry[]> {
-  const [categories, factories, productionFactories, equipmentOptions] = await Promise.all([
+  const [categories, factories, productionFactories, automationFactories, equipmentOptions] = await Promise.all([
     getCategories(),
     getFactories(),
     getProductionFactories(),
+    getAutomationFactories(),
     getEquipmentOptions(),
   ]);
   const categoryIds = new Set(categories.map((c) => c.id));
   const productionFactoryIds = new Set(productionFactories.map((f) => f.id));
+  const automationFactoryIds = new Set(automationFactories.map((f) => f.id));
 
   const entries: SearchEntry[] = [];
 
-  // Заводы: и роботы, и производственное оборудование
+  // Заводы: роботы, производственное оборудование и автоматическое (без робота)
   for (const factory of factories) {
     if (!factory.published) continue;
 
     let url: string | undefined;
     if (productionFactoryIds.has(factory.id)) {
       url = `/production/factory/${factory.id}`;
+    } else if (automationFactoryIds.has(factory.id)) {
+      url = `/automation/factory/${factory.id}`;
     } else {
       const categoryId = factory.categories.find((id) => categoryIds.has(id));
       if (categoryId) url = `/catalog/${categoryId}/factory/${factory.id}`;
@@ -201,6 +213,18 @@ export async function buildSearchIndex(locale: string): Promise<SearchEntry[]> {
       title: pickText(locale, equipment.name_ru, equipment.name_en),
       description: "",
       url: `/production/equipment/${equipment.id}`,
+      group: "page",
+    });
+  }
+
+  // Категории автоматического (не роботизированного) оборудования (/automation/[id])
+  const automationCategoryIds = new Set(automationFactories.flatMap((f) => f.categories));
+  for (const category of categories) {
+    if (category.segment !== "automation" || !automationCategoryIds.has(category.id)) continue;
+    entries.push({
+      title: pickText(locale, category.name_ru, category.name_en),
+      description: "",
+      url: `/automation/${category.id}`,
       group: "page",
     });
   }

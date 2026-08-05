@@ -23,7 +23,8 @@
     "requestQuote": "Request a quote",
     "search": "Search",
     "searchPlaceholder": "Search factories and site sections",
-    "searchNoResults": "Nothing found"
+    "searchNoResults": "Nothing found",
+    "automation": "Automated equipment"
   },
   "footer": {
     "legalNameZh": "上海拼那克了科技有限责任公司",
@@ -61,7 +62,8 @@
     "industries": "Industries",
     "services": "Services",
     "cases": "Cases and reviews",
-    "blog": "Blog"
+    "blog": "Blog",
+    "automation": "Automated equipment"
   },
   "faq": {
     "title": "Questions and answers",
@@ -169,7 +171,8 @@
     "successText": "We'll reach out within one business day.",
     "successUrgent": "If it's urgent, message us on Telegram: @ostapdotcenko",
     "successTelegram": "Message on Telegram",
-    "successBackCatalog": "Back to catalog"
+    "successBackCatalog": "Back to catalog",
+    "successBackAutomation": "Back to equipment"
   },
   "cases": {
     "emptyTitle": "Cases are being prepared",
@@ -187,5 +190,14 @@
     "authorLabel": "Author",
     "dateLabel": "Date",
     "tagsLabel": "Tags"
+  },
+  "automation": {
+    "hubTitle": "Automated equipment",
+    "hubDescription": "Conveyor scales, sorters and lines without a robotic manipulator — direct from Chinese factories.",
+    "noRobotNote": "This section is kept separate from the robot catalog: it lists automated but not robotic equipment (no manipulator). For robots, see \"Robots\" and \"Robotic equipment\".",
+    "equipmentEmptyTitle": "This category isn't set up yet",
+    "equipmentEmptyText": "Prices and factories for this equipment type are being added to the sheet.",
+    "suppliersTitle": "Suppliers",
+    "factoryEquipmentTitle": "Equipment"
   }
 }

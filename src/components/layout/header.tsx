@@ -7,7 +7,7 @@ import { routing } from "@/i18n/routing";
 import type { Category } from "@/lib/schemas";
 import { SiteSearch } from "./site-search";
 
-type NavKey = "robots" | "production" | "tours" | "consulting" | "blog";
+type NavKey = "robots" | "production" | "automation" | "tours" | "consulting" | "blog";
 
 type NavItem = {
   key: NavKey;
@@ -82,6 +82,13 @@ export function Header({
       categories: categories
         .filter((c) => c.segment === "production")
         .map((c) => ({ id: c.id, label: nameByLocale(c), href: `/production/equipment/${c.id}` })),
+    },
+    {
+      key: "automation",
+      href: "/automation",
+      categories: categories
+        .filter((c) => c.segment === "automation")
+        .map((c) => ({ id: c.id, label: nameByLocale(c), href: `/automation/${c.id}` })),
     },
     { key: "tours", href: "/tours", categories: [] },
     { key: "blog", href: "/blog", categories: [] },

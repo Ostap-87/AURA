@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { getBlogPosts, getCases, getCategories, getConsulting, getFactories } from "@/lib/data";
 import { getPublishedTours } from "@/lib/tours";
 import { getEquipmentOptions, getIntersectionParams, getProductionFactories } from "@/lib/production";
+import { getAutomationFactories } from "@/lib/automation";
+import { getPublishedCategories } from "@/lib/catalog";
 import { industriesContent } from "@/lib/content/industries-content";
 import { servicesContent } from "@/lib/content/services-content";
 import { subIndustries } from "@/lib/reference-data";
@@ -19,22 +21,33 @@ function entry(path: string, lastModified?: string): MetadataRoute.Sitemap[numbe
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [categories, factories, consulting, cases, tours, intersections, productionFactories, blogPosts] =
-    await Promise.all([
-      getCategories(),
-      getFactories(),
-      getConsulting(),
-      getCases(),
-      getPublishedTours(),
-      getIntersectionParams(),
-      getProductionFactories(),
-      getBlogPosts(),
-    ]);
+  const [
+    categories,
+    factories,
+    consulting,
+    cases,
+    tours,
+    intersections,
+    productionFactories,
+    automationFactories,
+    blogPosts,
+  ] = await Promise.all([
+    getCategories(),
+    getFactories(),
+    getConsulting(),
+    getCases(),
+    getPublishedTours(),
+    getIntersectionParams(),
+    getProductionFactories(),
+    getAutomationFactories(),
+    getBlogPosts(),
+  ]);
 
   const paths: string[] = [
     "/",
     "/catalog",
     "/production",
+    "/automation",
     "/quiz",
     "/tours",
     "/consulting",
@@ -82,6 +95,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
     for (const factory of productionFactories) {
       paths.push(`/production/factory/${factory.id}`);
+    }
+  }
+
+  // Автоматическое (не роботизированное) оборудование — отдельный сегмент
+  if (automationFactories.length > 0) {
+    const automationCategories = await getPublishedCategories("automation");
+    const automationCategoryIds = new Set(automationFactories.flatMap((f) => f.categories));
+    for (const category of automationCategories) {
+      if (automationCategoryIds.has(category.id)) paths.push(`/automation/${category.id}`);
+    }
+    for (const factory of automationFactories) {
+      paths.push(`/automation/factory/${factory.id}`);
     }
   }
 
