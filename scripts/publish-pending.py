@@ -17,7 +17,7 @@ import sys
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from telegram_client import send_telegram
+from telegram_client import publish_item
 
 APP_DIR = "/opt/aura"
 ENV_FILE = "/etc/aura-telegram.env"
@@ -86,7 +86,13 @@ def main():
             print(f"publish-pending: skipping {filename}, no 'text' field")
             continue
 
-        ok, detail = send_telegram(bot_token, chat_id, text)
+        # Optional cover media: "image" or "video" is a fully-qualified
+        # https:// URL (Telegram fetches it itself, so it must already be
+        # live — i.e. committed under public/ in the same push as this
+        # pending file, so the build serves it before this code runs).
+        media_url = item.get("image") or item.get("video")
+        media_kind = "video" if item.get("video") else "photo"
+        ok, detail = publish_item(bot_token, chat_id, text, media_url, media_kind)
         conn.execute(
             "INSERT INTO posts (project, channel, title, text, status, error, created_at, slug) "
             "VALUES (?, 'telegram', ?, ?, ?, ?, ?, ?) "
