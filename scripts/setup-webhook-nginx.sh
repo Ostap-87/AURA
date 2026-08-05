@@ -32,6 +32,16 @@ server {
         proxy_pass http://127.0.0.1:9001;
         proxy_set_header Host $host;
     }
+
+    # Generated media (cover images/video for blog + Telegram posts) lives
+    # outside the git-managed app dir on purpose — a redeploy's `git reset
+    # --hard` would wipe anything dropped inside the repo checkout.
+    # /var/www/aura-media is never touched by the deploy pipeline.
+    location /media/ {
+        alias /var/www/aura-media/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
 }
 
 server {

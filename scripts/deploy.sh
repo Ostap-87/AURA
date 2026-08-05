@@ -35,4 +35,7 @@ systemctl restart aura
 echo "=== publish pending content ==="
 python3 "$APP_DIR/scripts/publish-pending.py" || true
 
+echo "=== generate pending images ==="
+python3 "$APP_DIR/scripts/generate-pending-images.py" || true
+
 echo "Деплой завершён: $(date -Iseconds)"
