@@ -15,5 +15,7 @@
   "author": "Aura Robotics",
   "publishedAt": "2026-08-05",
   "published": true,
-  "cover": "https://www.aura-robotics.ru/covers/agibot-ubtech-deeprobotics-humanoid-factories.png"
+  "cover": "https://www.aura-robotics.ru/covers/agibot-ubtech-deeprobotics-humanoid-factories.png",
+  "coverCaption_ru": "Гуманоид AgiBot и робособака DeepRobotics на заводе",
+  "coverCaption_en": "An AgiBot humanoid and a DeepRobotics quadruped on the factory floor"
 }

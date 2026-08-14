@@ -15,5 +15,7 @@
   "author": "Aura Robotics",
   "publishedAt": "2026-08-12",
   "published": true,
-  "cover": "https://www.aura-robotics.ru/covers/galbot-limx-niche-humanoids.png"
+  "cover": "https://www.aura-robotics.ru/covers/galbot-limx-niche-humanoids.png",
+  "coverCaption_ru": "Колёсный гуманоид Galbot в розничном магазине",
+  "coverCaption_en": "A wheeled Galbot humanoid in a retail store"
 }
