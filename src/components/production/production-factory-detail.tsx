@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { MediaGallery } from "@/components/media/media-gallery";
 import { MediaSlot } from "@/components/media/media-slot";
 import { FactoryLeadForm } from "@/components/catalog/factory-lead-form";
+import { FactoryLogo } from "@/components/shared/factory-logo";
 import { Link } from "@/i18n/navigation";
 import { parseModels } from "@/lib/catalog";
 import { getModels } from "@/lib/data";
@@ -42,7 +43,8 @@ export async function ProductionFactoryDetail({ factory, locale }: { factory: Fa
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-heading-lg">{factory.name}</h1>
+        {factory.logo && <FactoryLogo factory={factory} size={56} />}
+        <h1 className={`text-heading-lg ${factory.logo ? "mt-3" : ""}`}>{factory.name}</h1>
         {factory.nameZh && <p className="mt-1 text-body text-stone">{factory.nameZh}</p>}
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-body-sm text-stone">
           <span>

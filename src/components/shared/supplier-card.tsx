@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { MediaSlot } from "@/components/media/media-slot";
+import { FactoryLogo } from "@/components/shared/factory-logo";
 import { Link } from "@/i18n/navigation";
 import type { Factory } from "@/lib/schemas";
 
@@ -35,7 +36,8 @@ export async function SupplierCard({
         emptyBehavior="hidden"
         className="mb-4"
       />
-      <h3 className="text-heading-sm">{factory.name}</h3>
+      {factory.logo && <FactoryLogo factory={factory} size={48} />}
+      <h3 className={`text-heading-sm ${factory.logo ? "mt-3" : ""}`}>{factory.name}</h3>
       <p className="mt-1 text-body-sm text-stone">
         {factory.city ? `${factory.city}, ` : ""}
         {factory.country}

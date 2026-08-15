@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { MediaSlot } from "@/components/media/media-slot";
+import { FactoryLogo } from "@/components/shared/factory-logo";
 import { csvList } from "@/lib/csv";
 import type { Factory } from "@/lib/schemas";
 import { useCompare } from "./compare-context";
@@ -59,7 +60,8 @@ export function FactoryCard({
             {tourBadge}
           </p>
         )}
-        <h3 className={featured ? "text-heading-sm pr-10" : "text-body font-medium pr-10"}>
+        {factory.logo && <FactoryLogo factory={factory} size={featured ? 56 : 40} />}
+        <h3 className={`${featured ? "text-heading-sm pr-10" : "text-body font-medium pr-10"} ${factory.logo ? "mt-3" : ""}`}>
           {factory.name}
         </h3>
         <p className="mt-1 text-body-sm text-stone">
