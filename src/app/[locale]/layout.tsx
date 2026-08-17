@@ -8,6 +8,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Logo } from "@/components/layout/logo";
 import { Analytics } from "@/components/analytics/analytics";
+import { MetrikaPageview } from "@/components/analytics/metrika-pageview";
 import { RobotMascot } from "@/components/mascot/robot-mascot";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getCategories, getConsulting } from "@/lib/data";
@@ -127,6 +128,7 @@ export default async function LocaleLayout({
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd(locale)} />
         <Analytics />
+        <MetrikaPageview />
       </body>
     </html>
   );
