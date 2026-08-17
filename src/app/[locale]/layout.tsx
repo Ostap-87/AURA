@@ -9,6 +9,7 @@ import { Footer } from "@/components/layout/footer";
 import { Logo } from "@/components/layout/logo";
 import { Analytics } from "@/components/analytics/analytics";
 import { MetrikaPageview } from "@/components/analytics/metrika-pageview";
+import { TelegramFloatingButton } from "@/components/layout/telegram-floating-button";
 import { RobotMascot } from "@/components/mascot/robot-mascot";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getCategories, getConsulting } from "@/lib/data";
@@ -124,6 +125,7 @@ export default async function LocaleLayout({
           <main>{children}</main>
           <Footer />
           <RobotMascot />
+          <TelegramFloatingButton />
         </NextIntlClientProvider>
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd(locale)} />

@@ -21,6 +21,9 @@ const CONTACTS = {
   officePhone: { label: "+86 137 6171 6355", href: "tel:+8613761716355" },
 };
 
+/** Public content channel — separate from the personal contact number above. */
+export const TELEGRAM_CHANNEL_URL = "https://t.me/aura_robots";
+
 export function Footer() {
   const t = useTranslations("footer");
 
@@ -55,6 +58,9 @@ export function Footer() {
           </a>
           <a href={CONTACTS.telegram.href} className="hover:text-accent">
             {t("telegram")}: {CONTACTS.telegram.label}
+          </a>
+          <a href={TELEGRAM_CHANNEL_URL} className="font-medium hover:text-accent">
+            {t("telegramChannel")}
           </a>
           <a href={CONTACTS.email.href} className="hover:text-accent">
             {t("email")}: {CONTACTS.email.label}

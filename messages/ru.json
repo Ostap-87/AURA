@@ -50,7 +50,10 @@
     "navContacts": "Контакты",
     "navPolicy": "Политика обработки данных",
     "navCases": "Кейсы и отзывы",
-    "navBlog": "Блог"
+    "navBlog": "Блог",
+    "telegramChannel": "Наш канал в Telegram",
+    "telegramSubscribe": "Подписаться",
+    "telegramSubscribeAria": "Подписаться на наш Telegram-канал"
   },
   "logo": {
     "alt": "Aura Robotics"
