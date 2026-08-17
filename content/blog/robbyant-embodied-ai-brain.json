@@ -16,5 +16,7 @@
     "Ant Group"
   ],
   "author": "Aura Robotics",
-  "image_prompt": "Photorealistic editorial photo of a sleek white humanoid service robot standing in a bright modern tech showroom, its head sensor array and hands lit by soft studio light, a large abstract data-visualization screen glowing softly in the background suggesting AI perception, shallow depth of field, cinematic lighting, high detail. No text, no logos, no brand names, no watermarks anywhere in the image."
+  "image_prompt": "Photorealistic editorial photo of a sleek white humanoid service robot standing in a bright modern tech showroom, its head sensor array and hands lit by soft studio light, a large abstract data-visualization screen glowing softly in the background suggesting AI perception, shallow depth of field, cinematic lighting, high detail. No text, no logos, no brand names, no watermarks anywhere in the image.",
+  "coverCaption_ru": "Robbyant разрабатывает универсальную модель управления роботами",
+  "coverCaption_en": "Robbyant develops a universal robot-control model"
 }

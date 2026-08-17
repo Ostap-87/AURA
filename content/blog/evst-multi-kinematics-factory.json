@@ -15,5 +15,7 @@
   "author": "Aura Robotics",
   "publishedAt": "2026-08-16",
   "published": true,
-  "cover": "https://aura-robotics.ru/covers/evst-multi-kinematics-factory.png"
+  "cover": "https://aura-robotics.ru/covers/evst-multi-kinematics-factory.png",
+  "coverCaption_ru": "Производственная линия EVST: сварочные роботы и паллетайзеры на одной площадке",
+  "coverCaption_en": "EVST production line: welding robots and palletizers on one site"
 }
