@@ -132,7 +132,6 @@ export function blogPostingJsonLd(input: {
   path: string;
   title: string;
   description: string;
-  author: string;
   datePublished: string;
   dateModified?: string;
   image?: string;
@@ -146,7 +145,8 @@ export function blogPostingJsonLd(input: {
     inLanguage: input.locale,
     datePublished: input.datePublished,
     dateModified: input.dateModified ?? input.datePublished,
-    author: { "@type": "Organization", name: input.author },
+    // Real named author (not the brand) — better for E-E-A-T than a bare Organization.
+    author: { "@type": "Person", name: "Ostap Dotcenko" },
     publisher: { "@type": "Organization", name: "Aura Robotics", logo: { "@type": "ImageObject", url: `${siteUrl}/logo.png` } },
     ...(input.image ? { image: input.image } : {}),
     mainEntityOfPage: { "@type": "WebPage", "@id": localeUrl(input.locale, input.path) },

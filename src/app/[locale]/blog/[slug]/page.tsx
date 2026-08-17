@@ -54,7 +54,6 @@ export default async function BlogPostPage({
           path: `/blog/${post.slug}`,
           title,
           description: excerpt,
-          author: post.author,
           datePublished: post.publishedAt,
           dateModified: post.updatedAt,
           image: post.cover,
