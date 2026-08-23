@@ -20,11 +20,17 @@ export async function generateMetadata({
   const { locale, factoryId } = await params;
   const factory = await getFactoryById(factoryId);
   if (!factory || !factory.segments.includes("production")) return {};
+  // Same factory detail also lives at /catalog/{category}/factory/{id} with
+  // identical title/description — canonicalize there to avoid duplicate
+  // content; this URL still renders normally for users and internal links.
+  const canonicalCategoryId = factory.categories[0];
   return {
     title: factory.name,
     description:
       locale === "en" && factory.description_en ? factory.description_en : factory.description_ru,
-    alternates: pageAlternates(locale, `/production/factory/${factoryId}`),
+    alternates: canonicalCategoryId
+      ? pageAlternates(locale, `/catalog/${canonicalCategoryId}/factory/${factoryId}`)
+      : pageAlternates(locale, `/production/factory/${factoryId}`),
   };
 }
 

@@ -14,11 +14,17 @@ export async function generateMetadata({
   const { locale, category: categoryId, factoryId } = await params;
   const factory = await getFactoryById(factoryId);
   if (!factory) return {};
+  // A factory listed under multiple categories (or also surfaced under
+  // /production or /automation) gets one identical detail page per URL —
+  // same title/description, different path. Canonicalize all of them to
+  // the factory's first listed category so search engines don't see
+  // duplicate content across those URLs; every URL still renders normally.
+  const canonicalCategoryId = factory.categories[0] ?? categoryId;
   return {
     title: factory.name,
     description:
       locale === "en" && factory.description_en ? factory.description_en : factory.description_ru,
-    alternates: pageAlternates(locale, `/catalog/${categoryId}/factory/${factoryId}`),
+    alternates: pageAlternates(locale, `/catalog/${canonicalCategoryId}/factory/${factoryId}`),
   };
 }
 
