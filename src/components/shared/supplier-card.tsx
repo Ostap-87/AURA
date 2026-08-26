@@ -36,7 +36,7 @@ export async function SupplierCard({
         emptyBehavior="hidden"
         className="mb-4"
       />
-      {factory.logo && <FactoryLogo factory={factory} size={48} />}
+      {factory.logo && <FactoryLogo factory={factory} size={96} />}
       <h3 className={`text-heading-sm ${factory.logo ? "mt-3" : ""}`}>{factory.name}</h3>
       <p className="mt-1 text-body-sm text-stone">
         {factory.city ? `${factory.city}, ` : ""}

@@ -60,7 +60,7 @@ export function FactoryCard({
             {tourBadge}
           </p>
         )}
-        {factory.logo && <FactoryLogo factory={factory} size={featured ? 56 : 40} />}
+        {factory.logo && <FactoryLogo factory={factory} size={featured ? 112 : 80} />}
         <h3 className={`${featured ? "text-heading-sm pr-10" : "text-body font-medium pr-10"} ${factory.logo ? "mt-3" : ""}`}>
           {factory.name}
         </h3>

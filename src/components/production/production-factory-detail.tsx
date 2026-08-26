@@ -43,7 +43,7 @@ export async function ProductionFactoryDetail({ factory, locale }: { factory: Fa
   return (
     <div className="flex flex-col gap-8">
       <div>
-        {factory.logo && <FactoryLogo factory={factory} size={56} />}
+        {factory.logo && <FactoryLogo factory={factory} size={112} />}
         <h1 className={`text-heading-lg ${factory.logo ? "mt-3" : ""}`}>{factory.name}</h1>
         {factory.nameZh && <p className="mt-1 text-body text-stone">{factory.nameZh}</p>}
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-body-sm text-stone">
