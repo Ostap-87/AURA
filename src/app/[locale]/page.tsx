@@ -72,6 +72,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       id: c.id,
       title: isEn ? c.title_en : c.title_ru,
       video: c.video,
+      orientation: c.videoOrientation,
       hasDetail: Boolean(c.fullText_ru),
     }));
   // Пока в таблице нет ни одного кейса с видео — карусель всё равно
@@ -85,6 +86,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           id: `placeholder-${i}`,
           title: "",
           video: undefined,
+          orientation: "horizontal" as const,
           hasDetail: false,
         }));
 

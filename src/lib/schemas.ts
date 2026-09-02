@@ -261,6 +261,8 @@ export const caseSchema = z.object({
   photo: z.string().optional(),
   photoCaption: z.string().optional(),
   video: z.string().optional(),
+  /** Ориентация ролика — определяет пропорции слота в карусели на главной. */
+  videoOrientation: z.enum(["horizontal", "vertical"]).default("horizontal"),
   date: z.string().optional(),
   order: z.number().int(),
   published: z.boolean(),
@@ -285,6 +287,7 @@ export const caseRowSchema = csvRowSchema(caseSchema, (row) => ({
   photo: row.photo || undefined,
   photoCaption: row.photoCaption || undefined,
   video: row.video || undefined,
+  videoOrientation: row.videoOrientation?.trim() === "vertical" ? "vertical" : "horizontal",
   date: row.date || undefined,
   order: csvNumber(row.order ?? ""),
   published: csvBoolean(row.published ?? ""),

@@ -4,7 +4,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { wrappedOffset } from "@/lib/carousel-math";
 
-export type VideoCaseItem = { id: string; title: string; video?: string; hasDetail: boolean };
+export type VideoCaseItem = {
+  id: string;
+  title: string;
+  video?: string;
+  orientation: "horizontal" | "vertical";
+  hasDetail: boolean;
+};
 
 const ANGLE_STEP = 22;
 const PX_PER_STEP = 160;
@@ -142,9 +148,14 @@ export function VideoCaseCarousel({
           const opacity = 1 - Math.min(absOffset * 0.4, 0.9);
           const isActive = absOffset < 0.5;
 
+          const isVertical = item.orientation === "vertical";
+
           const card = (
             <>
-              <div className="media-slot-empty relative aspect-video" aria-hidden={Boolean(item.video)}>
+              <div
+                className={`media-slot-empty relative ${isVertical ? "aspect-[9/16]" : "aspect-video"}`}
+                aria-hidden={Boolean(item.video)}
+              >
                 {item.video && (
                   <video
                     src={item.video}
@@ -194,6 +205,11 @@ export function VideoCaseCarousel({
             zIndex: 100 - Math.round(absOffset * 10),
           };
 
+          // Вертикальные ролики занимают меньше ширины слота — иначе
+          // portrait-видео растянутое до 60% ширины секции выглядит
+          // непропорционально огромным рядом с 16:9 карточками.
+          const cardWidthClass = isVertical ? "w-[28%] max-w-[380px]" : "w-[60%] max-w-[840px]";
+
           return item.hasDetail ? (
             <Link
               key={item.id}
@@ -204,7 +220,7 @@ export function VideoCaseCarousel({
                 if (movedRef.current) e.preventDefault();
               }}
               style={style}
-              className="absolute left-1/2 top-1/2 block w-[60%] max-w-[840px] overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg"
+              className={`absolute left-1/2 top-1/2 block ${cardWidthClass} overflow-hidden rounded-card border border-ink bg-warm-parchment shadow-lg`}
             >
               {card}
             </Link>
@@ -212,7 +228,7 @@ export function VideoCaseCarousel({
             <div
               key={item.id}
               style={style}
-              className="absolute left-1/2 top-1/2 block w-[60%] max-w-[840px] overflow-hidden rounded-card border border-fog bg-warm-parchment shadow-lg"
+              className={`absolute left-1/2 top-1/2 block ${cardWidthClass} overflow-hidden rounded-card border border-fog bg-warm-parchment shadow-lg`}
             >
               {card}
             </div>
