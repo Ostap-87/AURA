@@ -51,8 +51,11 @@ export default async function CasesPage({ params }: { params: Promise<{ locale: 
 
             const inner = (
               <>
+                {/* Видео-отзыв встаёт в тот же слот, что и фото — MediaSlot сам
+                    определяет тип по src (файл .mp4/.webm или YouTube/Vimeo)
+                    и рендерит видео с теми же подписью/версткой, что у фото. */}
                 <MediaSlot
-                  src={item.photo}
+                  src={item.video || item.photo}
                   caption={item.photoCaption}
                   aspect="4/3"
                   emptyBehavior="hidden"
