@@ -32,8 +32,15 @@ npm run build
 echo "=== restart aura ==="
 systemctl restart aura
 
-echo "=== publish pending content ==="
-python3 "$APP_DIR/scripts/publish-pending.py" || true
+# Telegram posts are NOT published from here — see
+# claude-control's data/editorial-policy.md ("Доставка в канал в
+# момент слота"). That used to run scripts/publish-pending.py against
+# content/pending/*.json after every deploy, but a post physically
+# couldn't go out until this (sometimes slow) build finished. The
+# current path is data/tg-queue/aura/ -> data/tg-publish/aura/ in the
+# claude-control repo, delivered straight to Telegram by
+# command-poller.py — independent of this deploy. Do not reintroduce
+# a content/pending-based Telegram publish step here.
 
 echo "=== generate pending images ==="
 python3 "$APP_DIR/scripts/generate-pending-images.py" || true

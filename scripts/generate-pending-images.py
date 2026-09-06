@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generates content/pending-images/*.json requests via Higgsfield, called
-from deploy.sh after a successful build. Same pattern as publish-pending.py
-for Telegram posts — write a JSON request, commit, push, this script picks
-it up on the next deploy. See image_gen.py for the actual generation logic.
+from deploy.sh after a successful build: write a JSON request, commit,
+push, this script picks it up on the next deploy. See image_gen.py for
+the actual generation logic.
 """
 import os
 import sys

@@ -10,10 +10,10 @@ deliberately OUTSIDE the app's git checkout: `npm run build` empties dist/
 on every deploy, and `git reset --hard` would wipe an untracked file placed
 inside the repo, so anything generated here would vanish on the next push.
 
-Idempotent across redeploys, same pattern as webhook-deploy.py's
-publish_pending(): each request's slug (filename minus .json) is recorded in
-a local SQLite DB; only a confirmed 'published' status is treated as done, so
-a crashed or failed generation retries on the next deploy.
+Idempotent across redeploys: each request's slug (filename minus .json) is
+recorded in a local SQLite DB; only a confirmed 'published' status is
+treated as done, so a crashed or failed generation retries on the next
+deploy.
 
 The exact shape of `higgsfield generate create --json ... --wait` output
 wasn't available while writing this (no live call made to avoid spending a
