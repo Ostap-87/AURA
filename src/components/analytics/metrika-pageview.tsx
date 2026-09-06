@@ -17,8 +17,10 @@ declare global {
  * visitor actually browsed. This sends an explicit 'hit' on every route
  * change so internal navigation is counted the way Metrika expects.
  */
+const DEFAULT_YANDEX_METRIKA_ID = "107709243";
+
 function MetrikaPageviewInner() {
-  const metrikaId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID;
+  const metrikaId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID || DEFAULT_YANDEX_METRIKA_ID;
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isFirstRender = useRef(true);

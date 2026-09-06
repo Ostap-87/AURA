@@ -5,8 +5,15 @@ import Script from "next/script";
  * Идентификаторы пока пустые — пока переменная не задана, счётчик не рендерится
  * и на страницу не попадает ни байта аналитики.
  */
+// Счётчик Yandex Metrika для aura-robotics.ru. Задан напрямую вместо
+// исключительной опоры на NEXT_PUBLIC_YANDEX_METRIKA_ID: переменная в
+// проде (Vercel) оказалась не задана, из-за чего счётчик несколько дней
+// вообще не грузился ни одному посетителю. Переменная окружения, если
+// когда-нибудь будет задана, по-прежнему имеет приоритет.
+const DEFAULT_YANDEX_METRIKA_ID = "107709243";
+
 export function Analytics() {
-  const metrikaId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID;
+  const metrikaId = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID || DEFAULT_YANDEX_METRIKA_ID;
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
